@@ -11,17 +11,23 @@ MaterialBanner is a library that provides an implementation of the banner widget
 You can download the sample app here.
 
 # Setup
+
 ## Add the gradle dependency
+
 ```
 implementation "com.sergivonavi:materialbanner:1.0.0"
 ```
+
 ## Check your theme
+
 In order to use this banner your app theme should inherit from a Material Components theme.
 
 More about that: [Getting Started - Material Components for Android](https://material.io/develop/android/docs/getting-started/).
 
 ## Create your banner
+
 ### In your `layout.xml`:
+
 ```
 <com.sergivonavi.materialbanner.Banner
     android:id="@+id/banner"
@@ -35,6 +41,7 @@ More about that: [Getting Started - Material Components for Android](https://mat
 ```
 
 then in your Activity/Fragment:
+
 ```
 Banner banner = findViewById(R.id.banner);
 banner.setLeftButtonListener(new BannerInterface.OnClickListener() {
@@ -57,6 +64,7 @@ banner.dismiss();
 ```
 
 ### From the code using [Builder](https://github.com/sergivonavi/MaterialBanner/blob/7b9c7776e90c18bdde33c94c78d4652442c078eb/library/src/main/java/com/sergivonavi/materialbanner/Banner.java#L1094):
+
 ```
 Banner banner = new Banner.Builder(context).setParent(rootView)
     .setIcon(R.drawable.ic_signal_wifi_off_40dp)
@@ -79,6 +87,7 @@ Banner banner = new Banner.Builder(context).setParent(rootView)
     
     banner.show();
 ```
+
 __DO NOT forget__ to call _Builder#setParent(...)_.
 Pass here a ViewGroup that will be a parent for your banner.
 
@@ -87,11 +96,15 @@ Or you can use:
 * _#setParent(ViewGroup, int, ViewGroup.LayoutParams)_ to change the default LayoutParams.
 
 ### Note
+
 You don't need to set both left and right buttons: you can set one of them (doesn't matter which one).
 
 # Additional setup
+
 ## Add listeners
+
 If you want to know when your banner was shown or dismissed you can set appropriate listeners from [BannerInterface](library/src/main/java/com/sergivonavi/materialbanner/BannerInterface.java):
+
 ```
 banner.setOnDismissListener(new BannerInterface.OnDismissListener() {
     @Override
@@ -106,7 +119,9 @@ banner.setOnShowListener(new BannerInterface.OnShowListener() {
     }
 })
 ```
+
 Or chain these calls to the Builder:
+
 ```
 new Banner.Builder(context)
     ...
@@ -126,9 +141,13 @@ new Banner.Builder(context)
 ```
 
 # Styling
+
 For the style guidelines read [Banners - theming](https://material.io/design/components/banners.html#theming).
+
 ## Changing style of a single banner
+
 ### In your `layout.xml`
+
 Available attributes:
 * backgroundColor
 * iconTint
@@ -141,6 +160,7 @@ Available attributes:
 * lineOpacity
 
 Usage:
+
 ```
 <com.sergivonavi.materialbanner.Banner
     ...
@@ -154,6 +174,7 @@ Usage:
     app:lineColor="@color/custom_line"
     app:lineOpacity="0.8" />
 ```
+
 ### From the code
 Available methods:
 * setBackgroundColor
@@ -165,6 +186,7 @@ Available methods:
 * setLineOpacity
 
 Usage:
+
 ```
 banner.setBackgroundColor(ContextCompat.getColor(this, R.color.custom_background));
 banner.setIconTintColor(R.color.custom_icon_tint);
@@ -176,6 +198,7 @@ banner.setLineOpacity(0.8f);
 ```
 
 ## Global style
+
 You can change style of your banner globally.
 
 Add _bannerStyle_ attribute to your theme:
@@ -186,7 +209,9 @@ Add _bannerStyle_ attribute to your theme:
     <item name="bannerStyle">@style/CustomBanner</item>
 </style>
 ```
+
 And create your custom style (you can inherit from the provided default banner styles):
+
 ```
 <style name="CustomBanner" parent="@style/Widget.Material.Banner">
     <!-- change what you want --> 
@@ -205,7 +230,9 @@ And create your custom style (you can inherit from the provided default banner s
     ...
 </style>
 ```
+
 ## Change padding of the banner's content to fit your layout
+
 If you want to do something like this:
 ![Banner in wide layout](https://storage.googleapis.com/spec-host-backup/mio-design%2Fassets%2F170Vf6civyniR4ROILotY0usRMAB0lgSL%2Fbanners-placement-desktop.png)
 You can change the content's padding using provided attributes or methods:
@@ -229,7 +256,9 @@ On tablet (sw720dp):
 See [Banners - specs](https://material.io/design/components/banners.html#specs) for visualisation.
 
 ### Example
+
 If the content of your screen has __32dp__ margin from both sides then you can set __16dp__ padding for your banner:
+
 ```
 app:contentPaddingEnd="16dp"
 app:contentPaddingStart="16dp"
@@ -239,7 +268,9 @@ or
 banner.setContentPaddingStart(R.dimen.banner_content_padding);
 banner.setContentPaddingEnd(R.dimen.banner_content_padding);
 ```
+
 ### Note
+
 __DO NOT__ set padding directly using the default padding attributes or methods. It will break the appearance of the widget.
 
 # License
