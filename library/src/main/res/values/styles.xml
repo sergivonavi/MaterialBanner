@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="TextAppearance" />
+
+    <style name="TextAppearance.Banner" />
+
+    <style name="TextAppearance.Banner.Message" parent="@style/TextAppearance.MaterialComponents.Body2">
+        <item name="android:textColor">?colorOnSurface</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="TextAppearance.Banner.Button" parent="@style/TextAppearance.MaterialComponents.Button">
+        <item name="android:textColor">?colorPrimary</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="Widget" />
+
+    <style name="Widget.Material" />
+
+    <style name="Widget.Material.Banner">
+        <item name="messageTextAppearance">@style/TextAppearance.Banner.Message</item>
+        <item name="buttonsTextAppearance">@style/TextAppearance.Banner.Button</item>
+        <item name="backgroundColor">?colorSurface</item>
+        <item name="lineColor">?colorOnSurface</item>
+        <item name="lineOpacity">0.12</item>
+    </style>
+
+</resources>

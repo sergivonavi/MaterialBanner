@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="define_int_MaterialBanner">year;owner</string>
+    <string name="library_MaterialBanner_author">Sergey Ivanov</string>
+    <string name="library_MaterialBanner_authorWebsite">https://github.com/sergivonavi</string>
+    <!-- Library section -->
+    <string name="library_MaterialBanner_libraryName">MaterialBanner</string>
+    <string name="library_MaterialBanner_libraryDescription">
+        <![CDATA[
+        <b>MaterialBanner</b> is a library that provides an implementation of the banner widget from the Material design.
+        ]]>
+    </string>
+    <string name="library_MaterialBanner_libraryWebsite">https://github.com/sergivonavi/MaterialBanner</string>
+    <string name="library_MaterialBanner_libraryVersion">@string/materialbanner_lib_version</string>
+    <string name="library_MaterialBanner_isOpenSource">true</string>
+    <string name="library_MaterialBanner_repositoryLink">https://github.com/sergivonavi/MaterialBanner</string>
+    <string name="library_MaterialBanner_licenseId">apache_2_0</string>
+    <!-- Custom variables section -->
+    <string name="library_MaterialBanner_owner">Sergey Ivanov</string>
+    <string name="library_MaterialBanner_year">2019</string>
+</resources>

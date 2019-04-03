@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="mb_container_padding_top_singleline">8dp</dimen>
+    <dimen name="mb_container_padding_top_multiline">16dp</dimen>
+
+    <dimen name="mb_message_margin_start">24dp</dimen>
+    <dimen name="mb_message_margin_end_singleline">90dp</dimen>
+    <dimen name="mb_message_margin_end_multiline">90dp</dimen>
+    <dimen name="mb_message_margin_bottom_multiline">0dp</dimen>
+    <dimen name="mb_message_margin_bottom_with_icon">0dp</dimen>
+
+</resources>

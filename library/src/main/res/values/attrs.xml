@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <attr name="bannerStyle" format="reference" />
+
+    <declare-styleable name="Banner">
+        <!-- Icon drawable to display at the start of this view. -->
+        <attr name="icon" format="reference" />
+        <!-- Tint color to use for the icon. -->
+        <attr name="iconTint" format="color" />
+        <!-- Message text to display in the Banner. -->
+        <attr name="messageText" format="string|reference" />
+        <!-- Text to display in the left button. -->
+        <attr name="buttonLeftText" format="string|reference" />
+        <!-- Text to display in the right button. -->
+        <attr name="buttonRightText" format="string|reference" />
+        <!-- Sets the padding, in pixels, of the start edge. -->
+        <attr name="contentPaddingStart" format="dimension" />
+        <!-- Sets the padding, in pixels, of the end edge. -->
+        <attr name="contentPaddingEnd" format="dimension" />
+        <!-- Base text color, typeface, size, and style of the message text. -->
+        <attr name="messageTextAppearance" format="reference" />
+        <!-- Base text color, typeface, size, and style of the buttons' text. -->
+        <attr name="buttonsTextAppearance" format="reference" />
+        <!-- Message text color. -->
+        <attr name="messageTextColor" format="color" />
+        <!-- Buttons text color. -->
+        <attr name="buttonsTextColor" format="color" />
+        <!-- Buttons' ripple color. -->
+        <attr name="buttonsRippleColor" format="color" />
+        <!-- Banner background color. -->
+        <attr name="backgroundColor" format="color" />
+        <!-- Divider color. -->
+        <attr name="lineColor" format="color" />
+        <!-- Divider opacity. -->
+        <attr name="lineOpacity" format="float" />
+    </declare-styleable>
+
+</resources>
