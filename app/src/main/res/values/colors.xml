@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#008577</color>
+    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorAccent">#D81B60</color>
+    <color name="colorSurface">#FFFFFF</color>
+    <color name="colorOnSurface">#000000</color>
+
+    <color name="custom_background">#FFE082</color>
+    <color name="custom_icon_tint">#303F9F</color>
+    <color name="custom_message_text">#388E3C</color>
+    <color name="custom_buttons_text">#7B1FA2</color>
+    <color name="custom_line">#d32f2f</color>
+
+    <color name="customTheme_colorPrimary">#1976D2</color>
+    <color name="customTheme_colorPrimaryDark">#0D47A1</color>
+    <color name="customTheme_colorAccent">#448AFF</color>
+    <color name="customTheme_colorSurface">#E3F2FD</color>
+    <color name="customTheme_colorOnSurface">#1E88E5</color>
+    <color name="customTheme_colorBackground">#E3F2FD</color>
+
+    <color name="long_text_background">#EEEEEE</color>
+</resources>

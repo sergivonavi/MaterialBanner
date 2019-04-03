@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- The default banner id. Used in the Builder to save the view state -->
+    <item name="mb_banner" type="id" />
+
+    <item name="mb_container_content" type="id" />
+    <item name="mb_container_buttons" type="id" />
+    <item name="mb_icon" type="id" />
+    <item name="mb_message" type="id" />
+    <item name="mb_button_left" type="id" />
+    <item name="mb_button_right" type="id" />
+    <item name="mb_line" type="id" />
+
+</resources>

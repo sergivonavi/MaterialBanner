@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Applied when the message takes 1 line and fits with the buttons on the right -->
+    <dimen name="mb_container_padding_top_one_line">10dp</dimen>
+    <!-- Applied when the message takes more than 1 line -->
+    <dimen name="mb_container_padding_top_multiline">24dp</dimen>
+
+    <dimen name="mb_icon_size">40dp</dimen>
+    <!-- Default icon's start margin -->
+    <dimen name="mb_icon_margin_start">16dp</dimen>
+    <!-- Default message's start margin -->
+    <dimen name="mb_message_margin_start">16dp</dimen>
+    <!-- Message's end margin when singleline -->
+    <dimen name="mb_message_margin_end_singleline">36dp</dimen>
+    <!-- Message's end margin when multiline-->
+    <dimen name="mb_message_margin_end_multiline">16dp</dimen>
+    <!-- Message's bottom margin when multiline and no icon -->
+    <dimen name="mb_message_margin_bottom_multiline">12dp</dimen>
+    <!-- Message's bottom margin when multiline with icon -->
+    <dimen name="mb_message_margin_bottom_with_icon">20dp</dimen>
+
+    <!-- Default button's margin end -->
+    <dimen name="mb_button_margin_end">8dp</dimen>
+    <!-- Default button's margin bottom -->
+    <dimen name="mb_button_margin_bottom">8dp</dimen>
+
+    <dimen name="mb_line_height">1dp</dimen>
+
+</resources>

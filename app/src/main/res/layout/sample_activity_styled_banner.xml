@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.sergivonavi.materialbanner.Banner
+        android:id="@+id/banner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:backgroundColor="@color/custom_background"
+        app:buttonLeftText="@string/banner_btn_left"
+        app:buttonRightText="@string/banner_btn_right"
+        app:buttonsRippleColor="@color/custom_buttons_text"
+        app:buttonsTextColor="@color/custom_buttons_text"
+        app:icon="@drawable/ic_signal_wifi_off_40dp"
+        app:iconTint="@color/custom_icon_tint"
+        app:lineColor="@color/custom_line"
+        app:lineOpacity="0.8"
+        app:messageText="@string/banner_message"
+        app:messageTextColor="@color/custom_message_text" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:gravity="center"
+        android:text="@string/styling_warning"
+        android:textSize="16sp" />
+
+</LinearLayout>

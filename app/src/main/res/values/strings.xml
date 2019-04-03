@@ -1,0 +1,43 @@
+<resources>
+    <string name="app_name">MaterialBanner</string>
+
+    <string name="demo_showcase">Showcase</string>
+    <string name="demo_from_layout">Banner from layout</string>
+    <string name="demo_from_code">Banner from code</string>
+    <string name="demo_styled">Styled Banner</string>
+    <string name="demo_global_style">Global Banner Style</string>
+    <string name="demo_with_padding">Banner with padding</string>
+
+    <string name="banner_message">You have lost connection to the Internet. This app is offline.</string>
+    <string name="banner_btn_left">Dismiss</string>
+    <string name="banner_btn_right">Turn on wifi</string>
+
+    <string name="banner_showcase_message_1">This is a short banner message.</string>
+    <string name="banner_showcase_message_2">This is a long banner message. But don\'t make it too long.</string>
+    <string name="banner_showcase_button">Action</string>
+
+    <string name="menu_about">About</string>
+    <string name="menu_toggle">Toggle Banner</string>
+
+    <string name="msg_banner_btnleft">Banner: Left Button</string>
+    <string name="msg_banner_btnright">Banner: Right Button</string>
+    <string name="msg_banner_ondismiss">Banner: onDismiss</string>
+    <string name="msg_banner_onshow">Banner: onShow</string>
+
+    <string name="styling_warning">This multicolor styling is done only for the showcase purposes.\nDon\'t do this in your real apps :)</string>
+    <string name="long_text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</string>
+
+    <string name="about_app_version">App version: %s</string>
+    <string name="about_lib_version">Library version: %s</string>
+
+    <string name="picasso_license">Copyright 2013 Square, Inc.\n\n
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at\n\nhttp://www.apache.org/licenses/LICENSE-2.0\n\n
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.</string>
+
+</resources>

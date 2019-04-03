@@ -1,0 +1,99 @@
+apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'com.jfrog.bintray'
+
+group = POM_GROUP_ID
+version = project.release.versionName
+
+install {
+    repositories.mavenInstaller {
+        pom {
+            project {
+                packaging 'aar'
+                groupId POM_GROUP_ID
+                artifactId POM_ARTIFACT_ID
+
+                name POM_NAME
+                description POM_DESCRIPTION
+                url POM_SITE_URL
+
+                licenses {
+                    license {
+                        name POM_LICENCE_NAME
+                        url POM_LICENCE_URL
+                    }
+                }
+                developers {
+                    developer {
+                        id POM_DEVELOPER_ID
+                        name POM_DEVELOPER_NAME
+                        email 'sergivonavi@gmail.com'
+                    }
+                }
+                scm {
+                    connection POM_GIT_URL
+                    developerConnection POM_GIT_URL
+                    url POM_SITE_URL
+
+                }
+            }
+        }
+    }
+}
+
+if (JavaVersion.current().isJava8Compatible()) {
+    allprojects {
+        tasks.withType(Javadoc) {
+            options.addStringOption('Xdoclint:none', '-quiet')
+        }
+    }
+}
+
+task androidJavadocs(type: Javadoc) {
+    failOnError = false
+    source = android.sourceSets.main.java.source
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator)) + configurations.compile
+}
+
+task androidJavadocsJar(type: Jar, dependsOn: androidJavadocs) {
+    classifier = 'javadoc'
+    from androidJavadocs.destinationDir
+}
+
+task androidSourcesJar(type: Jar) {
+    classifier = 'sources'
+    from android.sourceSets.main.java.source
+}
+
+artifacts {
+    archives androidSourcesJar
+    archives androidJavadocsJar
+}
+
+// Bintray
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
+bintray {
+    user = properties.getProperty("bintray.user")
+    key = properties.getProperty("bintray.apikey")
+
+    configurations = ['archives']
+    pkg {
+        repo = BINTRAY_REPO
+        name = BINTRAY_NAME
+        desc = POM_DESCRIPTION
+        websiteUrl = POM_SITE_URL
+        vcsUrl = POM_GIT_URL
+        licenses = POM_LICENCES
+        publish = true
+        publicDownloadNumbers = true
+        version {
+            desc = POM_DESCRIPTION
+            // released  = new Date()
+            gpg {
+                sign = true
+                passphrase = properties.getProperty("bintray.gpg.password")
+            }
+        }
+    }
+}

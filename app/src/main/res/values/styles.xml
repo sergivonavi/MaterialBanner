@@ -1,0 +1,35 @@
+<resources>
+
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.DarkActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorSurface">@color/colorSurface</item>
+        <item name="colorOnSurface">@color/colorOnSurface</item>
+    </style>
+
+    <style name="CustomTheme" parent="Theme.MaterialComponents.Light.DarkActionBar">
+        <item name="android:colorBackground">@color/customTheme_colorBackground</item>
+        <item name="colorPrimary">@color/customTheme_colorPrimary</item>
+        <item name="colorPrimaryDark">@color/customTheme_colorPrimaryDark</item>
+        <item name="colorAccent">@color/customTheme_colorAccent</item>
+        <item name="colorSurface">@color/customTheme_colorSurface</item>
+        <item name="colorOnSurface">@color/customTheme_colorOnSurface</item>
+        <item name="bannerStyle">@style/CustomBanner</item>
+    </style>
+
+    <style name="RecyclerView">
+        <item name="android:padding">4dp</item>
+        <item name="android:clipToPadding">false</item>
+    </style>
+
+    <!-- Custom Banner style -->
+    <style name="CustomBanner" parent="Widget.Material.Banner">
+        <item name="messageTextAppearance">@style/BannerMessageTextAppearance</item>
+    </style>
+
+    <style name="BannerMessageTextAppearance" parent="TextAppearance.Banner.Message">
+        <item name="android:textSize">16sp</item>
+    </style>
+
+</resources>

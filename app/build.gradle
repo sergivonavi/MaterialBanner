@@ -1,0 +1,34 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion setup.compileSdk
+    buildToolsVersion setup.buildTools
+    defaultConfig {
+        applicationId "com.sergivonavi.materialbanner.app"
+        minSdkVersion setup.minSdk
+        targetSdkVersion setup.targetSdk
+        versionCode release.appVersionCode
+        versionName release.appVersionName
+        vectorDrawables.useSupportLibrary = true
+
+        resValue "string", "materialbanner_app_version", "${versionName}"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    lintOptions {
+        abortOnError false
+    }
+}
+
+dependencies {
+    implementation project(':library')
+    implementation 'androidx.appcompat:appcompat:1.0.2'
+    implementation 'androidx.cardview:cardview:1.0.0'
+    implementation 'androidx.recyclerview:recyclerview:1.0.0'
+    implementation "com.google.android.material:material:${versions.material}"
+    implementation 'com.squareup.picasso:picasso:2.71828'
+}

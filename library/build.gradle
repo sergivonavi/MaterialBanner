@@ -1,0 +1,27 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion setup.compileSdk
+    buildToolsVersion setup.buildTools
+    defaultConfig {
+        minSdkVersion setup.minSdk
+        targetSdkVersion setup.targetSdk
+        versionCode release.versionCode
+        versionName release.versionName
+
+        resValue "string", "materialbanner_lib_version", "${versionName}"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            consumerProguardFiles 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    implementation "androidx.core:core:${versions.androidX_core}"
+    implementation "com.google.android.material:material:${versions.material}"
+}
+
+apply from: '../gradle-release.gradle'
