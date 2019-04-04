@@ -5,7 +5,10 @@ MaterialBanner is a library that provides an implementation of the banner widget
 
 [Banners - Material Design](https://material.io/design/components/banners.html).
 
+![MaterialBanner animation](SCREENSHOTS/materialbanner_animation.gif)
+
 # Preview
+
 ![MaterialBanner](SCREENSHOTS/screenshot.jpg)
 
 You can download the sample app here.
@@ -92,8 +95,8 @@ __DO NOT forget__ to call _Builder#setParent(...)_.
 Pass here a ViewGroup that will be a parent for your banner.
 
 Or you can use:
-* _#setParent(ViewGroup, int)_ to specify the index of the banner in ViewGroup's hierarchy;
-* _#setParent(ViewGroup, int, ViewGroup.LayoutParams)_ to change the default LayoutParams.
+* _setParent(ViewGroup, int)_ to specify the index of the banner in ViewGroup's hierarchy;
+* _setParent(ViewGroup, int, ViewGroup.LayoutParams)_ to change the default LayoutParams.
 
 ### Note
 
@@ -236,10 +239,10 @@ And create your custom style (you can inherit from the provided default banner s
 If you want to do something like this:
 ![Banner in wide layout](https://storage.googleapis.com/spec-host-backup/mio-design%2Fassets%2F170Vf6civyniR4ROILotY0usRMAB0lgSL%2Fbanners-placement-desktop.png)
 You can change the content's padding using provided attributes or methods:
-* contentPaddingStart
-* contentPaddingEnd
-* #setContentPaddingStart
-* #setContentPaddingEnd
+* attr: contentPaddingStart
+* attr: contentPaddingEnd
+* setContentPaddingStart
+* setContentPaddingEnd
 
 But account for the default padding:
 * the end padding is always __16dp__ (a distance between the button's last character and the end edge of a banner)
