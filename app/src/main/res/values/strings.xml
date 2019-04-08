@@ -9,6 +9,8 @@
     <string name="demo_with_padding">Banner with padding</string>
 
     <string name="banner_message">You have lost connection to the Internet. This app is offline.</string>
+    <string name="banner_message2">This is a banner created from the layout.</string>
+    <string name="banner_message3">This is a dynamically created banner.</string>
     <string name="banner_btn_left">Dismiss</string>
     <string name="banner_btn_right">Turn on wifi</string>
 

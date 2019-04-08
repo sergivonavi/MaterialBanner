@@ -14,12 +14,14 @@
         app:buttonLeftText="@string/banner_btn_left"
         app:buttonRightText="@string/banner_btn_right"
         app:buttonsRippleColor="@color/custom_buttons_text"
+        app:buttonsTextAppearance="@style/BannerButtonsTextAppearance"
         app:buttonsTextColor="@color/custom_buttons_text"
         app:icon="@drawable/ic_signal_wifi_off_40dp"
         app:iconTint="@color/custom_icon_tint"
         app:lineColor="@color/custom_line"
         app:lineOpacity="0.8"
-        app:messageText="@string/banner_message"
+        app:messageText="@string/banner_message2"
+        app:messageTextAppearance="@style/BannerMessageTextAppearance"
         app:messageTextColor="@color/custom_message_text" />
 
     <TextView

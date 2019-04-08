@@ -32,4 +32,8 @@
         <item name="android:textSize">16sp</item>
     </style>
 
+    <style name="BannerButtonsTextAppearance" parent="TextAppearance.Banner.Button">
+        <item name="android:textStyle">bold</item>
+    </style>
+
 </resources>

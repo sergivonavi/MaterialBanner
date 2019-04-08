@@ -12,9 +12,8 @@
         android:layout_height="wrap_content"
         app:buttonLeftText="@string/banner_btn_left"
         app:buttonRightText="@string/banner_btn_right"
-        app:contentPaddingEnd="16dp"
-        app:contentPaddingStart="16dp"
-        app:icon="@drawable/ic_signal_wifi_off_40dp"
+        app:contentPaddingEnd="@dimen/banner_content_padding_end"
+        app:contentPaddingStart="@dimen/banner_content_padding_start"
         app:messageText="@string/banner_message" />
 
     <androidx.cardview.widget.CardView

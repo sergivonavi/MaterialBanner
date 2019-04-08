@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Notice the 8dp start padding here instead of 16dp. -->
+    <dimen name="banner_content_padding_start">8dp</dimen>
+    <dimen name="banner_content_padding_end">16dp</dimen>
+
+</resources>

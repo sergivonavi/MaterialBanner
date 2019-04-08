@@ -60,6 +60,7 @@ import androidx.annotation.StyleRes;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.core.content.ContextCompat;
 import androidx.core.widget.ImageViewCompat;
+import androidx.core.widget.TextViewCompat;
 
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
@@ -699,12 +700,31 @@ public class Banner extends ViewGroup implements BannerInterface {
     }
 
     /**
+     * Sets the text appearance of a message from the specified style resource.
+     *
+     * @param resId The resource identifier of the style to apply.
+     */
+    public void setMessageTextAppearance(@StyleRes int resId) {
+        TextViewCompat.setTextAppearance(mMessageView, resId);
+    }
+
+    /**
      * Sets the text color of a message.
      *
      * @param colorId the resource id of the color
      */
     public void setMessageTextColor(@ColorRes int colorId) {
         mMessageView.setTextColor(ContextCompat.getColor(getContext(), colorId));
+    }
+
+    /**
+     * Sets the text appearance of buttons' text from the specified style resource.
+     *
+     * @param resId The resource identifier of the style to apply.
+     */
+    public void setButtonsTextAppearance(@StyleRes int resId) {
+        TextViewCompat.setTextAppearance(mLeftButton, resId);
+        TextViewCompat.setTextAppearance(mRightButton, resId);
     }
 
     /**
