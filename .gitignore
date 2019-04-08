@@ -37,6 +37,7 @@ captures/
 *.iml
 .idea/
 /_misc
+/_sign
 
 # Keystore files
 *.jks
