@@ -18,8 +18,8 @@ package com.sergivonavi.materialbanner.internal;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.Gravity;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RestrictTo;
@@ -40,32 +40,15 @@ public final class ButtonsContainer extends LinearLayout {
     }
 
     @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        /*int widthSpecSize = MeasureSpec.getSize(widthMeasureSpec);
-        if (getChildCount() > 1) {
-            int widthUsed = 0;
-            for (int i = 0; i < getChildCount(); i++) {
-                measureChild(getChildAt(i), widthMeasureSpec, heightMeasureSpec);
-                widthUsed += getChildAt(i).getMeasuredWidth();
-            }
-            if (widthUsed > widthSpecSize) {
-                if (getOrientation() == HORIZONTAL) {
-                    setOrientation(VERTICAL);
-                    setGravity(Gravity.END);
-                }
-            } else {
-                if (getOrientation() == VERTICAL) {
-                    setOrientation(HORIZONTAL);
-                }
-            }
-        }*/
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-    }
-
-    @Override
     public int getBaseline() {
         if (getChildCount() > 0) {
-            return getChildAt(0).getBaseline();
+            TextView view1 = (TextView) getChildAt(0);
+            TextView view2 = (TextView) getChildAt(1);
+            if (view1.isShown() && view1.getText() != null) {
+                return view1.getBaseline();
+            } else if (view2.isShown() && view2.getText() != null) {
+                return view2.getBaseline();
+            }
         }
         return -1;
     }
