@@ -18,7 +18,7 @@ You can download the sample app here.
 ## Add the gradle dependency
 
 ```
-implementation "com.sergivonavi:materialbanner:1.1.0"
+implementation "com.sergivonavi:materialbanner:1.2.0"
 ```
 
 ## Check your theme
