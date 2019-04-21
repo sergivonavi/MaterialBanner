@@ -1,4 +1,4 @@
-# MaterialBanner [ ![Download](https://api.bintray.com/packages/sergivonavi/maven/MaterialBanner/images/download.svg) ](https://bintray.com/sergivonavi/maven/MaterialBanner/_latestVersion) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+# MaterialBanner [ ![Download](https://api.bintray.com/packages/sergivonavi/maven/MaterialBanner/images/download.svg) ](https://bintray.com/sergivonavi/maven/MaterialBanner/_latestVersion) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-MaterialBanner-brightgreen.svg?style=flat)](https://android-arsenal.com/details/1/7605)
 > A banner displays a prominent message and related optional actions.
 
 MaterialBanner is a library that provides an implementation of the banner widget from the Material design.
@@ -18,7 +18,7 @@ You can download the sample app here.
 ## Add the gradle dependency
 
 ```
-implementation "com.sergivonavi:materialbanner:1.0.0"
+implementation "com.sergivonavi:materialbanner:1.1.0"
 ```
 
 ## Check your theme
@@ -169,9 +169,9 @@ Usage:
     ...
     app:backgroundColor="@color/custom_background"
     app:iconTint="@color/custom_icon_tint"
-    app:messageTextAppearance="@style/TextAppearance.CustomBanner.Message"
+    app:messageTextAppearance="@style/BannerMessageTextAppearance"
     app:messageTextColor="@color/custom_message_text"
-    app:buttonsTextAppearance="@style/TextAppearance.CustomBanner.Button"
+    app:buttonsTextAppearance="@style/BannerButtonsTextAppearance"
     app:buttonsTextColor="@color/custom_buttons_text"
     app:buttonsRippleColor="@color/custom_buttons_ripple"
     app:lineColor="@color/custom_line"
@@ -182,7 +182,9 @@ Usage:
 Available methods:
 * setBackgroundColor
 * setIconTintColor
+* setMessageTextAppearance
 * setMessageTextColor
+* setButtonsTextAppearance
 * setButtonsTextColor
 * setButtonsRippleColor
 * setLineColor
@@ -193,7 +195,9 @@ Usage:
 ```
 banner.setBackgroundColor(ContextCompat.getColor(this, R.color.custom_background));
 banner.setIconTintColor(R.color.custom_icon_tint);
+banner.setMessageTextAppearance(R.style.BannerMessageTextAppearance);
 banner.setMessageTextColor(R.color.custom_message_text);
+banner.setButtonsTextAppearance(R.style.BannerButtonsTextAppearance);
 banner.setButtonsTextColor(R.color.custom_buttons_text);
 banner.setButtonsRippleColor(R.color.custom_buttons_ripple);
 banner.setLineColor(R.color.custom_line);
@@ -260,7 +264,7 @@ See [Banners - specs](https://material.io/design/components/banners.html#specs) 
 
 ### Example
 
-If the content of your screen has __32dp__ margin from both sides then you can set __16dp__ padding for your banner:
+1. If the content of your screen has __32dp__ margin from both sides and you set an icon then you can set __16dp__ padding for your banner:
 
 ```
 app:contentPaddingEnd="16dp"
@@ -271,6 +275,14 @@ or
 banner.setContentPaddingStart(R.dimen.banner_content_padding);
 banner.setContentPaddingEnd(R.dimen.banner_content_padding);
 ```
+
+2. Everything is the same but no icon:
+* for mobile devices - __16dp__ padding from both sides;
+* for tablets
+  * __16dp__ end padding
+  * __8dp__ start padding (32dp margin - 24dp margin of the message)
+  
+See the sample app for example.
 
 ### Note
 
