@@ -35,7 +35,6 @@ import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.google.android.material.button.MaterialButton;
@@ -98,6 +97,7 @@ import static android.widget.RelativeLayout.TRUE;
  * </p>
  */
 public class Banner extends ViewGroup implements BannerInterface {
+    private static final String TAG = "Banner";
     private static final boolean DEBUG = false;
 
     @IntDef(value = {VISIBLE, INVISIBLE, GONE})
@@ -132,9 +132,6 @@ public class Banner extends ViewGroup implements BannerInterface {
     private int mMessageMarginEndMultiline;
     private int mMessageMarginBottomMultiline;
     private int mMessageMarginBottomWithIcon;
-
-    private int mButtonMarginEnd;
-    private int mButtonMarginBottom;
 
     private int mLineHeight;
 
@@ -191,9 +188,6 @@ public class Banner extends ViewGroup implements BannerInterface {
         mMessageMarginBottomMultiline = getDimen(R.dimen.mb_message_margin_bottom_multiline);
         mMessageMarginBottomWithIcon = getDimen(R.dimen.mb_message_margin_bottom_with_icon);
 
-        mButtonMarginEnd = getDimen(R.dimen.mb_button_margin_end);
-        mButtonMarginBottom = getDimen(R.dimen.mb_button_margin_bottom);
-
         mLineHeight = getDimen(R.dimen.mb_line_height);
 
         mContainerPaddingTopOneLine = getDimen(R.dimen.mb_container_padding_top_singleline);
@@ -248,40 +242,10 @@ public class Banner extends ViewGroup implements BannerInterface {
 
         mButtonsContainer = new ButtonsContainer(context);
         mButtonsContainer.setId(R.id.mb_container_buttons);
-        mButtonsContainer.setOrientation(LinearLayout.HORIZONTAL);
-        mButtonsContainer.setBaselineAligned(false);
         mButtonsContainer.setLayoutParams(relativeLayoutParams);
 
-        // BUTTONS' PARAMS
-        LinearLayout.LayoutParams linearLayoutParams = new LinearLayout.LayoutParams(WRAP_CONTENT,
-                WRAP_CONTENT);
-        linearLayoutParams.weight = 1.0f;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            linearLayoutParams.setMarginEnd(mButtonMarginEnd);
-        } else {
-            linearLayoutParams.rightMargin = mButtonMarginEnd;
-        }
-        linearLayoutParams.bottomMargin = mButtonMarginBottom;
-
-        // LEFT BUTTON
-        mLeftButton = new MaterialButton(context, null, R.attr.borderlessButtonStyle);
-        mLeftButton.setId(R.id.mb_button_left);
-        mLeftButton.setSingleLine(true);
-        mLeftButton.setMaxLines(1);
-        mLeftButton.setMinWidth(0);
-        mLeftButton.setMinimumWidth(0);
-        mLeftButton.setLayoutParams(linearLayoutParams);
-        mLeftButton.setVisibility(GONE);
-
-        // RIGHT BUTTON
-        mRightButton = new MaterialButton(context, null, R.attr.borderlessButtonStyle);
-        mRightButton.setId(R.id.mb_button_right);
-        mRightButton.setSingleLine(true);
-        mRightButton.setMaxLines(1);
-        mRightButton.setMinWidth(0);
-        mRightButton.setMinimumWidth(0);
-        mRightButton.setLayoutParams(linearLayoutParams);
-        mRightButton.setVisibility(GONE);
+        mLeftButton = mButtonsContainer.getLeftButton();
+        mRightButton = mButtonsContainer.getRightButton();
 
         // LINE
         layoutParams = new LayoutParams(MATCH_PARENT, mLineHeight);
@@ -292,9 +256,6 @@ public class Banner extends ViewGroup implements BannerInterface {
 
         addView(mContentContainer);
         addView(mLine);
-
-        mButtonsContainer.addView(mLeftButton, 0);
-        mButtonsContainer.addView(mRightButton, 1);
 
         mContentContainer.addView(mIconView);
         mContentContainer.addView(mMessageView);
@@ -378,9 +339,9 @@ public class Banner extends ViewGroup implements BannerInterface {
 
         // Measure the message view
         measureChild(mMessageView, widthMeasureSpec, heightMeasureSpec);
-        // Adding the start margin and possible multiline end margin
+        // Adding the start margin and possible single line end margin
         int messageViewWidth =
-                mMessageView.getMeasuredWidth() + mMessageMarginStart + mMessageMarginEndMultiline;
+                mMessageView.getMeasuredWidth() + mMessageMarginStart + mMessageMarginEndSingleLine;
 
         // Measure the icon
         int iconViewWidth = 0;
@@ -457,13 +418,26 @@ public class Banner extends ViewGroup implements BannerInterface {
                 .getLayoutParams();
 
         if (mWideLayout) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                messageLayoutParams.addRule(START_OF, mButtonsContainer.getId());
-            } else {
-                messageLayoutParams.addRule(LEFT_OF, mButtonsContainer.getId());
-            }
+            if (mButtonsContainer.getMeasuredWidth()
+                    > (getMeasuredWidth() - getContainerHorizontalPadding()) / 2) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                    messageLayoutParams.addRule(START_OF, 0);
+                } else {
+                    messageLayoutParams.addRule(LEFT_OF, 0);
+                }
+                messageLayoutParams.bottomMargin = mIcon
+                        == null ? mMessageMarginBottomMultiline : mMessageMarginBottomWithIcon;
 
-            buttonsContainerLayoutParams.addRule(ALIGN_BASELINE, mMessageView.getId());
+                buttonsContainerLayoutParams.addRule(BELOW, mMessageView.getId());
+            } else {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                    messageLayoutParams.addRule(START_OF, mButtonsContainer.getId());
+                } else {
+                    messageLayoutParams.addRule(LEFT_OF, mButtonsContainer.getId());
+                }
+
+                buttonsContainerLayoutParams.addRule(ALIGN_BASELINE, mMessageView.getId());
+            }
         } else {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
                 messageLayoutParams.addRule(START_OF, 0);
