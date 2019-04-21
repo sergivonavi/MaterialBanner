@@ -378,9 +378,9 @@ public class Banner extends ViewGroup implements BannerInterface {
 
         // Measure the message view
         measureChild(mMessageView, widthMeasureSpec, heightMeasureSpec);
-        // Adding the start margin and possible multiline end margin
+        // Adding the start margin and possible single line end margin
         int messageViewWidth =
-                mMessageView.getMeasuredWidth() + mMessageMarginStart + mMessageMarginEndMultiline;
+                mMessageView.getMeasuredWidth() + mMessageMarginStart + mMessageMarginEndSingleLine;
 
         // Measure the icon
         int iconViewWidth = 0;
