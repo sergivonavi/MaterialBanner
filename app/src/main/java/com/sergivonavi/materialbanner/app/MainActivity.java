@@ -15,8 +15,13 @@ import com.sergivonavi.materialbanner.app.activities.StyledBannerActivity;
 import com.sergivonavi.materialbanner.app.activities.WithPaddingActivity;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+
+    static {
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

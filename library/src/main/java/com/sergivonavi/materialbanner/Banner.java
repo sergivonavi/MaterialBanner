@@ -267,7 +267,7 @@ public class Banner extends ViewGroup implements BannerInterface {
                 R.style.Widget_Material_Banner);
 
         if (a.hasValue(R.styleable.Banner_icon)) {
-            setIcon(a.getDrawable(R.styleable.Banner_icon));
+            setIcon(a.getResourceId(R.styleable.Banner_icon, -1));
         }
         if (a.hasValue(R.styleable.Banner_iconTint)) {
             setIconTintColorInternal(a.getColor(R.styleable.Banner_iconTint, Color.BLACK));
