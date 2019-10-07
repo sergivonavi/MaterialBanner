@@ -7,6 +7,7 @@
     <string name="demo_styled">Styled Banner</string>
     <string name="demo_global_style">Global Banner Style</string>
     <string name="demo_with_padding">Banner with padding</string>
+    <string name="demo_custom_font">Banner custom fonts</string>
 
     <string name="banner_message">You have lost connection to the Internet. This app is offline.</string>
     <string name="banner_message2">This is a banner created from the layout.</string>
@@ -31,6 +32,9 @@
 
     <string name="about_app_version">App version: %s</string>
     <string name="about_lib_version">Library version: %s</string>
+
+    <string name="font_light_path">fonts/Roboto-Light.ttf</string>
+    <string name="font_medium_path">fonts/Roboto-Medium.ttf</string>
 
     <string name="picasso_license">Copyright 2013 Square, Inc.\n\n
 Licensed under the Apache License, Version 2.0 (the "License");
