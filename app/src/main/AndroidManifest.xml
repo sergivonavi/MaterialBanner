@@ -40,6 +40,7 @@
         <activity
             android:name=".activities.WithPaddingActivity"
             android:label="@string/demo_with_padding" />
+        <activity android:name=".activities.CustomFontActivity" />
     </application>
 
 </manifest>

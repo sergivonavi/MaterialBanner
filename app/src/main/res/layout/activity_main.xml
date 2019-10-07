@@ -43,4 +43,11 @@
         android:layout_height="wrap_content"
         android:text="@string/demo_with_padding" />
 
+    <Button
+        android:id="@+id/btn_custom_fonts"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/demo_custom_font" />
+
+
 </LinearLayout>

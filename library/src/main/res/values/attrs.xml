@@ -34,6 +34,12 @@
         <attr name="lineColor" format="color" />
         <!-- Divider opacity. -->
         <attr name="lineOpacity" format="float" />
+        <!-- Message font name -->
+        <attr name="messageFontPath" format="string" />
+        <!-- Button font name -->
+        <attr name="buttonFontPath" format="string" />
+        <!-- Message  and button title font name -->
+        <attr name="fontPath" format="string" />
     </declare-styleable>
 
 </resources>

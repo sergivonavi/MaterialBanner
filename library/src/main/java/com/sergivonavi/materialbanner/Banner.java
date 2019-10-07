@@ -25,6 +25,7 @@ import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Parcel;
@@ -97,29 +98,30 @@ import static android.widget.RelativeLayout.TRUE;
  * </p>
  */
 public class Banner extends ViewGroup implements BannerInterface {
-    private static final String TAG = "Banner";
+    private static final String  TAG   = "Banner";
     private static final boolean DEBUG = false;
 
     @IntDef(value = {VISIBLE, INVISIBLE, GONE})
     @Retention(RetentionPolicy.SOURCE)
-    private @interface Visibility {}
+    private @interface Visibility {
+    }
 
-    private static final int LAYOUT_UNDEFINED = -1;
+    private static final int LAYOUT_UNDEFINED   = -1;
     private static final int LAYOUT_SINGLE_LINE = 0;
-    private static final int LAYOUT_MULTILINE = 1;
+    private static final int LAYOUT_MULTILINE   = 1;
 
-    private RelativeLayout mContentContainer;
+    private RelativeLayout     mContentContainer;
     private AppCompatImageView mIconView;
-    private MessageView mMessageView;
-    private ButtonsContainer mButtonsContainer;
-    private MaterialButton mLeftButton;
-    private MaterialButton mRightButton;
-    private View mLine;
+    private MessageView        mMessageView;
+    private ButtonsContainer   mButtonsContainer;
+    private MaterialButton     mLeftButton;
+    private MaterialButton     mRightButton;
+    private View               mLine;
 
     private Drawable mIcon;
-    private String mMessageText;
-    private String mLeftButtonText;
-    private String mRightButtonText;
+    private String   mMessageText;
+    private String   mLeftButtonText;
+    private String   mRightButtonText;
 
     private int mContainerPaddingTopOneLine;
     private int mContainerPaddingTopMultiline;
@@ -152,14 +154,14 @@ public class Banner extends ViewGroup implements BannerInterface {
     private int mLayoutType = LAYOUT_UNDEFINED;
 
     private static final int ANIM_DURATION_DISMISS = 160;
-    private static final int ANIM_DURATION_SHOW = 180;
+    private static final int ANIM_DURATION_SHOW    = 180;
 
     private boolean mIsAnimating;
 
-    private BannerInterface.OnClickListener mLeftButtonListener;
-    private BannerInterface.OnClickListener mRightButtonListener;
+    private BannerInterface.OnClickListener   mLeftButtonListener;
+    private BannerInterface.OnClickListener   mRightButtonListener;
     private BannerInterface.OnDismissListener mOnDismissListener;
-    private BannerInterface.OnShowListener mOnShowListener;
+    private BannerInterface.OnShowListener    mOnShowListener;
 
     public Banner(Context context) {
         this(context, null);
@@ -301,6 +303,20 @@ public class Banner extends ViewGroup implements BannerInterface {
             mLeftButton.setTextColor(a.getColor(R.styleable.Banner_buttonsTextColor, Color.BLACK));
             mRightButton.setTextColor(a.getColor(R.styleable.Banner_buttonsTextColor, Color.BLACK));
         }
+        if (a.hasValue(R.styleable.Banner_fontPath)) {
+            Typeface typeface = getFont(a.getString(R.styleable.Banner_fontPath));
+            mLeftButton.setTypeface(typeface);
+            mRightButton.setTypeface(typeface);
+            mMessageView.setTypeface(typeface);
+        }
+        if (!a.hasValue(R.styleable.Banner_fontPath) && a.hasValue(R.styleable.Banner_buttonFontPath)) {
+            Typeface typeface = getFont(a.getString(R.styleable.Banner_buttonFontPath));
+            mLeftButton.setTypeface(typeface);
+            mRightButton.setTypeface(typeface);
+        }
+        if (!a.hasValue(R.styleable.Banner_fontPath) && a.hasValue(R.styleable.Banner_messageFontPath)) {
+            mMessageView.setTypeface(getFont(a.getString(R.styleable.Banner_messageFontPath)));
+        }
         if (a.hasValue(R.styleable.Banner_buttonsRippleColor)) {
             mLeftButton.setRippleColor(ColorStateList.valueOf(
                     a.getColor(R.styleable.Banner_buttonsRippleColor, Color.BLACK)));
@@ -334,7 +350,7 @@ public class Banner extends ViewGroup implements BannerInterface {
 
         int widthSpecSize = MeasureSpec.getSize(widthMeasureSpec);
 
-        int widthUsed = getContainerHorizontalPadding();
+        int widthUsed  = getContainerHorizontalPadding();
         int heightUsed = 0;
 
         // Measure the message view
@@ -383,7 +399,7 @@ public class Banner extends ViewGroup implements BannerInterface {
                 .getLayoutParams();
         RelativeLayout.LayoutParams buttonsContainerLayoutParams =
                 (RelativeLayout.LayoutParams) mButtonsContainer
-                .getLayoutParams();
+                        .getLayoutParams();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
             messageLayoutParams.addRule(START_OF, mButtonsContainer.getId());
@@ -415,7 +431,7 @@ public class Banner extends ViewGroup implements BannerInterface {
                 .getLayoutParams();
         RelativeLayout.LayoutParams buttonsContainerLayoutParams =
                 (RelativeLayout.LayoutParams) mButtonsContainer
-                .getLayoutParams();
+                        .getLayoutParams();
 
         if (mWideLayout) {
             if (mButtonsContainer.getMeasuredWidth()
@@ -467,7 +483,7 @@ public class Banner extends ViewGroup implements BannerInterface {
         RelativeLayout.LayoutParams messageLayoutParams = (RelativeLayout.LayoutParams) mMessageView
                 .getLayoutParams();
         int parentStart = mIcon == null ? TRUE : 0;
-        int toEndOfId = mIcon == null ? 0 : mIconView.getId();
+        int toEndOfId   = mIcon == null ? 0 : mIconView.getId();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
             messageLayoutParams.addRule(ALIGN_PARENT_START, parentStart);
             messageLayoutParams.addRule(END_OF, toEndOfId);
@@ -853,7 +869,7 @@ public class Banner extends ViewGroup implements BannerInterface {
         int heightSpec = MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED);
         measure(widthSpec, heightSpec);
 
-        final int fromY = -getMeasuredHeight();
+        final int                fromY        = -getMeasuredHeight();
         final MarginLayoutParams layoutParams = (MarginLayoutParams) getLayoutParams();
         mMarginBottom = layoutParams.bottomMargin;
 
@@ -907,7 +923,7 @@ public class Banner extends ViewGroup implements BannerInterface {
      */
     @Override
     public void dismiss(long delay) {
-        final int toY = -getMeasuredHeight();
+        final int                toY          = -getMeasuredHeight();
         final MarginLayoutParams layoutParams = (MarginLayoutParams) getLayoutParams();
         mMarginBottom = layoutParams.bottomMargin;
 
@@ -1028,7 +1044,7 @@ public class Banner extends ViewGroup implements BannerInterface {
     @Override
     protected Parcelable onSaveInstanceState() {
         Parcelable superState = super.onSaveInstanceState();
-        SavedState ss = new SavedState(superState);
+        SavedState ss         = new SavedState(superState);
         ss.visibility = getVisibility();
         return ss;
     }
@@ -1044,6 +1060,18 @@ public class Banner extends ViewGroup implements BannerInterface {
         // Restore visibility
         setVisibility(ss.visibility);
     }
+
+    private Typeface getFont(String fontPath) {
+        Typeface typeface = null;
+
+        try {
+            typeface = Typeface.createFromAsset(getContext().getAssets(), fontPath);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return typeface;
+    }
+
 
     private static class SavedState extends BaseSavedState {
         int visibility;
@@ -1065,34 +1093,34 @@ public class Banner extends ViewGroup implements BannerInterface {
 
         public static final Parcelable.Creator<SavedState> CREATOR =
                 new Parcelable.Creator<SavedState>() {
-            public SavedState createFromParcel(Parcel in) {
-                return new SavedState(in);
-            }
+                    public SavedState createFromParcel(Parcel in) {
+                        return new SavedState(in);
+                    }
 
-            public SavedState[] newArray(int size) {
-                return new SavedState[size];
-            }
-        };
+                    public SavedState[] newArray(int size) {
+                        return new SavedState[size];
+                    }
+                };
     }
 
     public static class Builder {
         private Context mContext;
 
-        private ViewGroup mParent;
-        private int mChildIndex;
+        private ViewGroup              mParent;
+        private int                    mChildIndex;
         private ViewGroup.LayoutParams mParams;
 
         @IdRes
-        private int mId;
+        private int      mId;
         private Drawable mIcon;
-        private String mMessageText;
-        private String mLeftBtnText;
-        private String mRightBtnText;
+        private String   mMessageText;
+        private String   mLeftBtnText;
+        private String   mRightBtnText;
 
-        private BannerInterface.OnClickListener mLeftBtnListener;
-        private BannerInterface.OnClickListener mRightBtnListener;
+        private BannerInterface.OnClickListener   mLeftBtnListener;
+        private BannerInterface.OnClickListener   mRightBtnListener;
         private BannerInterface.OnDismissListener mOnDismissListener;
-        private BannerInterface.OnShowListener mOnShowListener;
+        private BannerInterface.OnShowListener    mOnShowListener;
 
         /**
          * Creates a builder for a banner that uses the default banner style (either specified in

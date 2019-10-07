@@ -7,6 +7,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
+import com.sergivonavi.materialbanner.app.activities.CustomFontActivity;
 import com.sergivonavi.materialbanner.app.activities.FromCodeActivity;
 import com.sergivonavi.materialbanner.app.activities.FromLayoutActivity;
 import com.sergivonavi.materialbanner.app.activities.GlobalStyleActivity;
@@ -29,12 +30,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Button btn4 = findViewById(R.id.btn_styled);
         Button btn5 = findViewById(R.id.btn_global_style);
         Button btn6 = findViewById(R.id.btn_with_padding);
+        Button btn7 = findViewById(R.id.btn_custom_fonts);
         btn1.setOnClickListener(this);
         btn2.setOnClickListener(this);
         btn3.setOnClickListener(this);
         btn4.setOnClickListener(this);
         btn5.setOnClickListener(this);
         btn6.setOnClickListener(this);
+        btn7.setOnClickListener(this);
     }
 
     @Override
@@ -58,6 +61,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.btn_with_padding:
                 intent.setClass(MainActivity.this, WithPaddingActivity.class);
+                break;
+            case R.id.btn_custom_fonts:
+                intent.setClass(MainActivity.this, CustomFontActivity.class);
                 break;
         }
         startActivity(intent);
