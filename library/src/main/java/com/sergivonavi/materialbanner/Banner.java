@@ -1061,6 +1061,46 @@ public class Banner extends ViewGroup implements BannerInterface {
         setVisibility(ss.visibility);
     }
 
+    public void setButtonFont(String fontPath) {
+        Typeface typeface = getFont(fontPath);
+        mLeftButton.setTypeface(typeface);
+        mRightButton.setTypeface(typeface);
+        mMessageView.setTypeface(typeface);
+    }
+
+    public void setMessageFont(String fontPath) {
+        mMessageView.setTypeface(getFont(fontPath));
+    }
+
+    public void setFont(String fontPath) {
+        Typeface typeface = getFont(fontPath);
+        mLeftButton.setTypeface(typeface);
+        mRightButton.setTypeface(typeface);
+        mMessageView.setTypeface(typeface);
+    }
+
+    public void setButtonFont(Typeface typeface) {
+        mLeftButton.setTypeface(typeface);
+        mRightButton.setTypeface(typeface);
+        mMessageView.setTypeface(typeface);
+    }
+
+    public void setMessageFont(Typeface typeface) {
+        mMessageView.setTypeface(typeface);
+    }
+
+    public void setFont(Typeface typeface) {
+        mLeftButton.setTypeface(typeface);
+        mRightButton.setTypeface(typeface);
+        mMessageView.setTypeface(typeface);
+    }
+
+
+    /**
+     * Get Font from assets
+     *
+     * @return Typeface
+     */
     private Typeface getFont(String fontPath) {
         Typeface typeface = null;
 
