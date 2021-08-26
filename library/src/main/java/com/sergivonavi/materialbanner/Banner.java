@@ -711,6 +711,14 @@ public class Banner extends ViewGroup implements BannerInterface {
         mRightButton.setTextColor(ContextCompat.getColor(getContext(), colorId));
     }
 
+    public void setRightButtonTextColor(@ColorRes int colorId) {
+        mRightButton.setTextColor(ContextCompat.getColor(getContext(), colorId));
+    }
+
+    public void setLeftButtonTextColor(@ColorRes int colorId) {
+        mLeftButton.setTextColor(ContextCompat.getColor(getContext(), colorId));
+    }
+
     /**
      * Sets the ripple color for both buttons.
      *
