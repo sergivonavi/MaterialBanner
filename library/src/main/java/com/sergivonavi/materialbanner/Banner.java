@@ -706,10 +706,6 @@ public class Banner extends ViewGroup implements BannerInterface {
      *
      * @param colorId the resource id of the color
      */
-    public void setButtonsTextColor(@ColorRes int colorId) {
-        mLeftButton.setTextColor(ContextCompat.getColor(getContext(), colorId));
-        mRightButton.setTextColor(ContextCompat.getColor(getContext(), colorId));
-    }
 
     public void setRightButtonTextColor(@ColorRes int colorId) {
         mRightButton.setTextColor(ContextCompat.getColor(getContext(), colorId));
