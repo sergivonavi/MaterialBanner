@@ -4,7 +4,7 @@ android {
     compileSdkVersion setup.compileSdk
     buildToolsVersion setup.buildTools
     defaultConfig {
-        applicationId "com.sergivonavi.materialbanner.app"
+        applicationId "com.bruno.materialbanner.app"
         minSdkVersion setup.minSdk
         targetSdkVersion setup.targetSdk
         versionCode release.appVersionCode
