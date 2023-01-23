@@ -957,7 +957,8 @@ public class Banner extends ViewGroup implements BannerInterface {
                 MarginLayoutParams layoutParams = (MarginLayoutParams) getLayoutParams();
                 layoutParams.bottomMargin = mMarginBottom;
                 setLayoutParams(layoutParams);
-                setTranslationY(0);
+                // #7 Fix dismiss animation
+                //setTranslationY(0);
             }
 
             if (isShown()) {
