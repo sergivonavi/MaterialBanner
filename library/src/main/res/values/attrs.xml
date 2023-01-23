@@ -26,6 +26,10 @@
         <attr name="messageTextColor" format="color" />
         <!-- Buttons text color. -->
         <attr name="buttonsTextColor" format="color" />
+        <!-- Left button text color. -->
+        <attr name="buttonLeftTextColor" format="color" />
+        <!-- Right button text color. -->
+        <attr name="buttonRightTextColor" format="color" />
         <!-- Buttons' ripple color. -->
         <attr name="buttonsRippleColor" format="color" />
         <!-- Banner background color. -->

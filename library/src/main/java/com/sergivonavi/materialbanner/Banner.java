@@ -301,6 +301,12 @@ public class Banner extends ViewGroup implements BannerInterface {
             mLeftButton.setTextColor(a.getColor(R.styleable.Banner_buttonsTextColor, Color.BLACK));
             mRightButton.setTextColor(a.getColor(R.styleable.Banner_buttonsTextColor, Color.BLACK));
         }
+        if (a.hasValue(R.styleable.Banner_buttonLeftTextColor)) {
+            mLeftButton.setTextColor(a.getColor(R.styleable.Banner_buttonLeftTextColor, Color.BLACK));
+        }
+        if (a.hasValue(R.styleable.Banner_buttonRightTextColor)) {
+            mRightButton.setTextColor(a.getColor(R.styleable.Banner_buttonRightTextColor, Color.BLACK));
+        }
         if (a.hasValue(R.styleable.Banner_buttonsRippleColor)) {
             mLeftButton.setRippleColor(ColorStateList.valueOf(
                     a.getColor(R.styleable.Banner_buttonsRippleColor, Color.BLACK)));
@@ -712,6 +718,24 @@ public class Banner extends ViewGroup implements BannerInterface {
     }
 
     /**
+     * Sets the text color of the left button.
+     *
+     * @param colorId the resource id of the color
+     */
+    public void setLeftButtonTextColor(@ColorRes int colorId) {
+        mLeftButton.setTextColor(ContextCompat.getColor(getContext(), colorId));
+    }
+
+    /**
+     * Sets the text color of the right button.
+     *
+     * @param colorId the resource id of the color
+     */
+    public void setRightButtonTextColor(@ColorRes int colorId) {
+        mRightButton.setTextColor(ContextCompat.getColor(getContext(), colorId));
+    }
+
+    /**
      * Sets the ripple color for both buttons.
      *
      * @param colorId the resource id of the color
@@ -932,7 +956,7 @@ public class Banner extends ViewGroup implements BannerInterface {
         animatorSet.start();
     }
 
-    private AnimatorListenerAdapter mAnimatorListener = new AnimatorListenerAdapter() {
+    private final AnimatorListenerAdapter mAnimatorListener = new AnimatorListenerAdapter() {
         @Override
         public void onAnimationStart(final Animator animation) {
             // onAnimationStart is invoked immediately after calling AnimatorSet.start()
@@ -1077,7 +1101,7 @@ public class Banner extends ViewGroup implements BannerInterface {
     }
 
     public static class Builder {
-        private Context mContext;
+        private final Context mContext;
 
         private ViewGroup mParent;
         private int mChildIndex;

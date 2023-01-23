@@ -16,6 +16,7 @@
         app:buttonsRippleColor="@color/custom_buttons_text"
         app:buttonsTextAppearance="@style/BannerButtonsTextAppearance"
         app:buttonsTextColor="@color/custom_buttons_text"
+        app:buttonRightTextColor="@color/custom_button_right_text"
         app:icon="@drawable/ic_signal_wifi_off_40dp"
         app:iconTint="@color/custom_icon_tint"
         app:lineColor="@color/custom_line"
