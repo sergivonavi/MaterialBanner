@@ -118,7 +118,7 @@ public class Banner extends ViewGroup implements BannerInterface {
     private View mLine;
 
     private Drawable mIcon;
-    private String mMessageText;
+    private CharSequence mMessageText;
     private String mLeftButtonText;
     private String mRightButtonText;
 
@@ -538,7 +538,7 @@ public class Banner extends ViewGroup implements BannerInterface {
      *
      * @param text The text to display in the banner
      */
-    public void setMessage(String text) {
+    public void setMessage(CharSequence text) {
         mMessageText = text;
         mMessageView.setText(text);
     }
@@ -1206,7 +1206,7 @@ public class Banner extends ViewGroup implements BannerInterface {
         @IdRes
         private int mId;
         private Drawable mIcon;
-        private String mMessageText;
+        private CharSequence mMessageText;
         private String mLeftBtnText;
         private String mRightBtnText;
 
@@ -1336,7 +1336,7 @@ public class Banner extends ViewGroup implements BannerInterface {
          *
          * @return the {@link Builder} object to chain calls
          */
-        public Builder setMessage(@NonNull String text) {
+        public Builder setMessage(@NonNull CharSequence text) {
             mMessageText = text;
             return this;
         }
