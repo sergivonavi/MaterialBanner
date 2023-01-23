@@ -25,6 +25,7 @@ import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Parcel;
@@ -294,6 +295,21 @@ public class Banner extends ViewGroup implements BannerInterface {
             mRightButton.setTextAppearance(context, textAppearance);
         }
 
+        if (a.hasValue(R.styleable.Banner_fontPath)) {
+            Typeface typeface = getFont(a.getString(R.styleable.Banner_fontPath));
+            mLeftButton.setTypeface(typeface);
+            mRightButton.setTypeface(typeface);
+            mMessageView.setTypeface(typeface);
+        }
+        if (a.hasValue(R.styleable.Banner_buttonsFontPath)) {
+            Typeface typeface = getFont(a.getString(R.styleable.Banner_buttonsFontPath));
+            mLeftButton.setTypeface(typeface);
+            mRightButton.setTypeface(typeface);
+        }
+        if (a.hasValue(R.styleable.Banner_messageFontPath)) {
+            mMessageView.setTypeface(getFont(a.getString(R.styleable.Banner_messageFontPath)));
+        }
+
         if (a.hasValue(R.styleable.Banner_messageTextColor)) {
             mMessageView.setTextColor(a.getColor(R.styleable.Banner_messageTextColor, Color.BLACK));
         }
@@ -302,10 +318,12 @@ public class Banner extends ViewGroup implements BannerInterface {
             mRightButton.setTextColor(a.getColor(R.styleable.Banner_buttonsTextColor, Color.BLACK));
         }
         if (a.hasValue(R.styleable.Banner_buttonLeftTextColor)) {
-            mLeftButton.setTextColor(a.getColor(R.styleable.Banner_buttonLeftTextColor, Color.BLACK));
+            mLeftButton.setTextColor(
+                    a.getColor(R.styleable.Banner_buttonLeftTextColor, Color.BLACK));
         }
         if (a.hasValue(R.styleable.Banner_buttonRightTextColor)) {
-            mRightButton.setTextColor(a.getColor(R.styleable.Banner_buttonRightTextColor, Color.BLACK));
+            mRightButton.setTextColor(
+                    a.getColor(R.styleable.Banner_buttonRightTextColor, Color.BLACK));
         }
         if (a.hasValue(R.styleable.Banner_buttonsRippleColor)) {
             mLeftButton.setRippleColor(ColorStateList.valueOf(
@@ -385,11 +403,10 @@ public class Banner extends ViewGroup implements BannerInterface {
 
         setContainerPadding(-1, mContainerPaddingTopOneLine, -1);
 
-        RelativeLayout.LayoutParams messageLayoutParams = (RelativeLayout.LayoutParams) mMessageView
-                .getLayoutParams();
+        RelativeLayout.LayoutParams messageLayoutParams =
+                (RelativeLayout.LayoutParams) mMessageView.getLayoutParams();
         RelativeLayout.LayoutParams buttonsContainerLayoutParams =
-                (RelativeLayout.LayoutParams) mButtonsContainer
-                .getLayoutParams();
+                (RelativeLayout.LayoutParams) mButtonsContainer.getLayoutParams();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
             messageLayoutParams.addRule(START_OF, mButtonsContainer.getId());
@@ -417,11 +434,10 @@ public class Banner extends ViewGroup implements BannerInterface {
 
         setContainerPadding(-1, mContainerPaddingTopMultiline, -1);
 
-        RelativeLayout.LayoutParams messageLayoutParams = (RelativeLayout.LayoutParams) mMessageView
-                .getLayoutParams();
+        RelativeLayout.LayoutParams messageLayoutParams =
+                (RelativeLayout.LayoutParams) mMessageView.getLayoutParams();
         RelativeLayout.LayoutParams buttonsContainerLayoutParams =
-                (RelativeLayout.LayoutParams) mButtonsContainer
-                .getLayoutParams();
+                (RelativeLayout.LayoutParams) mButtonsContainer.getLayoutParams();
 
         if (mWideLayout) {
             if (mButtonsContainer.getMeasuredWidth()
@@ -470,8 +486,8 @@ public class Banner extends ViewGroup implements BannerInterface {
     }
 
     private void updateParamsOnIconChanged() {
-        RelativeLayout.LayoutParams messageLayoutParams = (RelativeLayout.LayoutParams) mMessageView
-                .getLayoutParams();
+        RelativeLayout.LayoutParams messageLayoutParams =
+                (RelativeLayout.LayoutParams) mMessageView.getLayoutParams();
         int parentStart = mIcon == null ? TRUE : 0;
         int toEndOfId = mIcon == null ? 0 : mIconView.getId();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
@@ -677,6 +693,86 @@ public class Banner extends ViewGroup implements BannerInterface {
 
     private void setIconTintColorInternal(@ColorInt int color) {
         ImageViewCompat.setImageTintList(mIconView, ColorStateList.valueOf(color));
+    }
+
+    /**
+     * Creates a new typeface from the specified font in the assets folder.
+     *
+     * @param fontPath path to the font in the assets folder, e.g. <i>"fonts/Roboto-Medium.ttf"</i>
+     * @return Typeface The new typeface
+     */
+    private Typeface getFont(String fontPath) {
+        Typeface typeface = null;
+        try {
+            typeface = Typeface.createFromAsset(getContext().getAssets(), fontPath);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return typeface;
+    }
+
+    /**
+     * Sets the font of the buttons and message.
+     *
+     * @param fontPath path to the font in the assets folder, e.g. <i>"fonts/Roboto-Medium.ttf"</i>
+     */
+    public void setFont(String fontPath) {
+        Typeface typeface = getFont(fontPath);
+        mLeftButton.setTypeface(typeface);
+        mRightButton.setTypeface(typeface);
+        mMessageView.setTypeface(typeface);
+    }
+
+    /**
+     * Sets the font of the buttons and message.
+     *
+     * @param typeface typeface
+     */
+    public void setFont(Typeface typeface) {
+        mLeftButton.setTypeface(typeface);
+        mRightButton.setTypeface(typeface);
+        mMessageView.setTypeface(typeface);
+    }
+
+    /**
+     * Sets the font of the message.
+     *
+     * @param fontPath path to the font in the assets folder, e.g. <i>"fonts/Roboto-Medium.ttf"</i>
+     */
+    public void setMessageFont(String fontPath) {
+        Typeface typeface = getFont(fontPath);
+        mMessageView.setTypeface(typeface);
+    }
+
+    /**
+     * Sets the font of the message.
+     *
+     * @param typeface typeface
+     */
+    public void setMessageFont(Typeface typeface) {
+        mMessageView.setTypeface(typeface);
+    }
+
+    /**
+     * Sets the font of the buttons.
+     *
+     * @param fontPath path to the font in the assets folder, e.g. <i>"fonts/Roboto-Medium.ttf"</i>
+     */
+    public void setButtonsFont(String fontPath) {
+        Typeface typeface = getFont(fontPath);
+        mLeftButton.setTypeface(typeface);
+        mRightButton.setTypeface(typeface);
+    }
+
+    /**
+     * Sets the font of the buttons.
+     *
+     * @param typeface typeface
+     */
+    public void setButtonsFont(Typeface typeface) {
+        mLeftButton.setTypeface(typeface);
+        mRightButton.setTypeface(typeface);
+        mMessageView.setTypeface(typeface);
     }
 
     /**

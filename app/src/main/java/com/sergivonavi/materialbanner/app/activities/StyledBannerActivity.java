@@ -29,10 +29,13 @@ public class StyledBannerActivity extends AppCompatActivity {
         banner.setMessageTextAppearance(R.style.BannerMessageTextAppearance);
         banner.setMessageTextColor(R.color.custom_message_text);
         banner.setIconTintColor(R.color.custom_icon_tint);
+        // banner.setFont(getString(R.string.font_medium_path));
+        // banner.setMessageFont(getString(R.string.font_medium_path));
+        // banner.setButtonsFont(getString(R.string.font_medium_path));
         banner.setButtonsTextAppearance(R.style.BannerButtonsTextAppearance);
         banner.setButtonsTextColor(R.color.custom_buttons_text);
         banner.setLeftButtonTextColor(R.color.custom_button_left_text);
-//        banner.setRightButtonTextColor(R.color.custom_button_right_text);
+        // banner.setRightButtonTextColor(R.color.custom_button_right_text);
         banner.setButtonsRippleColor(R.color.custom_buttons_text);
         banner.setLineColor(R.color.custom_line);
         banner.setLineOpacity(0.8f);
