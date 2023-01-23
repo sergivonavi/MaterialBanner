@@ -1,21 +1,28 @@
 apply plugin: 'com.android.library'
 
-android {
-    compileSdkVersion setup.compileSdk
-    buildToolsVersion setup.buildTools
-    defaultConfig {
-        minSdkVersion setup.minSdk
-        targetSdkVersion setup.targetSdk
-        versionCode release.versionCode
-        versionName release.versionName
+def versionNameSuffix = "-debug"
 
-        resValue "string", "materialbanner_lib_version", "${versionName}"
+android {
+    namespace 'com.sergivonavi.materialbanner'
+    compileSdk setup.compileSdk
+
+    defaultConfig {
+        minSdk setup.minSdk
+        targetSdk setup.targetSdk
+
+        resValue "string", "materialbanner_lib_version", "${project.release.versionName}${versionNameSuffix}"
     }
     buildTypes {
         release {
             minifyEnabled false
             consumerProguardFiles 'proguard-rules.pro'
+
+            resValue "string", "materialbanner_lib_version", "${project.release.versionName}"
         }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 }
 
@@ -24,4 +31,5 @@ dependencies {
     implementation "com.google.android.material:material:${versions.material}"
 }
 
-apply from: '../gradle-release.gradle'
+// ignore for now
+//apply from: '../gradle-release.gradle'

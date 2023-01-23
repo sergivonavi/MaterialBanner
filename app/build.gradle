@@ -2,12 +2,13 @@ apply plugin: 'com.android.application'
 apply from: '../_sign/signing.gradle'
 
 android {
-    compileSdkVersion setup.compileSdk
-    buildToolsVersion setup.buildTools
+    namespace 'com.sergivonavi.materialbanner.app'
+    compileSdk setup.compileSdk
+
     defaultConfig {
         applicationId "com.sergivonavi.materialbanner.app"
-        minSdkVersion setup.minSdk
-        targetSdkVersion setup.targetSdk
+        minSdk setup.minSdk
+        targetSdk setup.targetSdk
         versionCode release.appVersionCode
         versionName release.appVersionName
         vectorDrawables.useSupportLibrary = true
@@ -22,16 +23,20 @@ android {
             signingConfig signingConfigs.release
         }
     }
-    lintOptions {
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    lint {
         abortOnError false
     }
 }
 
 dependencies {
     implementation project(':library')
-    implementation 'androidx.appcompat:appcompat:1.0.2'
+    implementation 'androidx.appcompat:appcompat:1.6.0'
     implementation 'androidx.cardview:cardview:1.0.0'
-    implementation 'androidx.recyclerview:recyclerview:1.0.0'
+    implementation 'androidx.recyclerview:recyclerview:1.2.1'
     implementation "com.google.android.material:material:${versions.material}"
     implementation 'com.squareup.picasso:picasso:2.71828'
 }
