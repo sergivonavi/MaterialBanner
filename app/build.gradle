@@ -17,12 +17,12 @@ android {
         versionName release.appVersionName
         vectorDrawables.useSupportLibrary = true
 
-        resValue "string", "materialbanner_app_version", "${versionName}"
+        resValue("string", "materialbanner_app_version", "${versionName}")
     }
     buildTypes {
         release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
+            minifyEnabled = false
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
 
             signingConfig signingConfigs.release
         }

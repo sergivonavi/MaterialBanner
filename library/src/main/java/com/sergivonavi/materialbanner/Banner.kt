@@ -13,498 +13,426 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.sergivonavi.materialbanner
 
-package com.sergivonavi.materialbanner;
-
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
-import android.animation.ValueAnimator;
-import android.content.Context;
-import android.content.res.ColorStateList;
-import android.content.res.TypedArray;
-import android.graphics.Color;
-import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
-import android.os.Build;
-import android.os.Parcel;
-import android.os.Parcelable;
-import android.util.AttributeSet;
-import android.util.Log;
-import android.view.ContextThemeWrapper;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.animation.AccelerateDecelerateInterpolator;
-import android.widget.RelativeLayout;
-
-import com.google.android.material.button.MaterialButton;
-import com.sergivonavi.materialbanner.internal.ButtonsContainer;
-import com.sergivonavi.materialbanner.internal.MessageView;
-
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-
-import androidx.annotation.ColorInt;
-import androidx.annotation.ColorRes;
-import androidx.annotation.DimenRes;
-import androidx.annotation.Dimension;
-import androidx.annotation.DrawableRes;
-import androidx.annotation.FloatRange;
-import androidx.annotation.IdRes;
-import androidx.annotation.IntDef;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
-import androidx.annotation.StyleRes;
-import androidx.appcompat.widget.AppCompatImageView;
-import androidx.core.content.ContextCompat;
-import androidx.core.widget.ImageViewCompat;
-import androidx.core.widget.TextViewCompat;
-
-import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
-import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
-import static android.widget.RelativeLayout.ALIGN_BASELINE;
-import static android.widget.RelativeLayout.ALIGN_PARENT_END;
-import static android.widget.RelativeLayout.ALIGN_PARENT_LEFT;
-import static android.widget.RelativeLayout.ALIGN_PARENT_RIGHT;
-import static android.widget.RelativeLayout.ALIGN_PARENT_START;
-import static android.widget.RelativeLayout.BELOW;
-import static android.widget.RelativeLayout.END_OF;
-import static android.widget.RelativeLayout.LEFT_OF;
-import static android.widget.RelativeLayout.RIGHT_OF;
-import static android.widget.RelativeLayout.START_OF;
-import static android.widget.RelativeLayout.TRUE;
+import android.animation.*
+import android.content.Context
+import android.content.res.ColorStateList
+import android.graphics.Color
+import android.graphics.Typeface
+import android.graphics.drawable.Drawable
+import android.os.Build
+import android.os.Parcel
+import android.os.Parcelable
+import android.os.Parcelable.Creator
+import android.util.AttributeSet
+import android.util.Log
+import android.view.ContextThemeWrapper
+import android.view.View
+import android.view.ViewGroup
+import android.view.animation.AccelerateDecelerateInterpolator
+import android.widget.RelativeLayout
+import androidx.annotation.*
+import androidx.appcompat.widget.AppCompatImageView
+import androidx.core.content.ContextCompat
+import androidx.core.widget.ImageViewCompat
+import androidx.core.widget.TextViewCompat
+import com.google.android.material.button.MaterialButton
+import com.sergivonavi.materialbanner.widget.ButtonsContainer
+import com.sergivonavi.materialbanner.widget.MessageView
 
 /**
  * A banner displays an important, succinct message, and provides actions for users to address
  * (or dismiss the banner). It requires a user action to be dismissed.
- * <p>
+ *
+ *
  * Banners should be displayed at the top of the screen, below a top app bar. They are persistent
  * and nonmodal, allowing the user to either ignore them or interact with them at any time.
- * </p>
- * <p>
- * Banners can contain up to two action buttons which are set via {@link #setLeftButton} and
- * {@link #setRightButton} methods.
- * </p>
- * <p>
+ *
+ *
+ *
+ * Banners can contain up to two action buttons which are set via [.setLeftButton] and
+ * [.setRightButton] methods.
+ *
+ *
+ *
  * To be notified when a banner has been shown or dismissed, you can provide a
- * {@link BannerInterface.OnShowListener} and {@link BannerInterface.OnDismissListener} via
- * {@link #setOnShowListener(OnShowListener)} and {@link #setOnDismissListener(OnDismissListener)}.
- * </p>
+ * [BannerInterface.OnShowListener] and [BannerInterface.OnDismissListener] via
+ * [setOnShowListener] and [setOnDismissListener].
+ *
  * <h3>Design Guides</h3>
- * <p>For the style and usage guidelines read the
- * <a href="https://material.io/design/components/banners.html" target="_top">Banners - Material Design</a>.
- * </p>
+ *
+ * For the style and usage guidelines read the
+ * [Banners - Material Design](https://material.io/design/components/banners.html).
+ *
  */
-public class Banner extends ViewGroup implements BannerInterface {
-    private static final String TAG = "Banner";
-    private static final boolean DEBUG = false;
+@Suppress("unused", "MemberVisibilityCanBePrivate")
+class Banner @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = R.attr.bannerStyle
+) : ViewGroup(context, attrs, defStyleAttr), BannerInterface {
+    @IntDef(value = [VISIBLE, INVISIBLE, GONE])
+    @Retention(AnnotationRetention.SOURCE)
+    private annotation class Visibility
 
-    @IntDef(value = {VISIBLE, INVISIBLE, GONE})
-    @Retention(RetentionPolicy.SOURCE)
-    private @interface Visibility {}
-
-    private static final int LAYOUT_UNDEFINED = -1;
-    private static final int LAYOUT_SINGLE_LINE = 0;
-    private static final int LAYOUT_MULTILINE = 1;
-
-    private RelativeLayout mContentContainer;
-    private AppCompatImageView mIconView;
-    private MessageView mMessageView;
-    private ButtonsContainer mButtonsContainer;
-    private MaterialButton mLeftButton;
-    private MaterialButton mRightButton;
-    private View mLine;
-
-    private Drawable mIcon;
-    private CharSequence mMessageText;
-    private String mLeftButtonText;
-    private String mRightButtonText;
-
-    private int mContainerPaddingTopOneLine;
-    private int mContainerPaddingTopMultiline;
-
-    private int mIconSize;
-    private int mIconMarginStart;
-
-    private int mMessageMarginStart;
-    private int mMessageMarginEndSingleLine;
-    private int mMessageMarginEndMultiline;
-    private int mMessageMarginBottomMultiline;
-    private int mMessageMarginBottomWithIcon;
-
-    private int mLineHeight;
+    private lateinit var mContentContainer: RelativeLayout
+    private lateinit var mIconView: AppCompatImageView
+    private lateinit var mMessageView: MessageView
+    private lateinit var mButtonsContainer: ButtonsContainer
+    private lateinit var mLeftButton: MaterialButton
+    private lateinit var mRightButton: MaterialButton
+    private lateinit var mLine: View
+    private var mIcon: Drawable? = null
+    private var mMessageText: CharSequence? = null
+    private var mLeftButtonText: String? = null
+    private var mRightButtonText: String? = null
+    private var mContainerPaddingTopOneLine = 0
+    private var mContainerPaddingTopMultiline = 0
+    private var mIconSize = 0
+    private var mIconMarginStart = 0
+    private var mMessageMarginStart = 0
+    private var mMessageMarginEndSingleLine = 0
+    private var mMessageMarginEndMultiline = 0
+    private var mMessageMarginBottomMultiline = 0
+    private var mMessageMarginBottomWithIcon = 0
+    private var mLineHeight = 0
 
     /**
      * Banner's bottom margin.
      */
-    private int mMarginBottom;
+    private var mMarginBottom = 0
 
     /**
      * Indicates that the device is at least a 10-inch tablet.
      */
-    private boolean mWideLayout;
+    private var mWideLayout = false
 
     /**
-     * The layout type: {@link #LAYOUT_UNDEFINED} {@link #LAYOUT_SINGLE_LINE} or
-     * {@link #LAYOUT_MULTILINE}.
+     * The layout type: [.LAYOUT_UNDEFINED] [.LAYOUT_SINGLE_LINE] or
+     * [.LAYOUT_MULTILINE].
      */
-    private int mLayoutType = LAYOUT_UNDEFINED;
-
-    private static final int ANIM_DURATION_DISMISS = 160;
-    private static final int ANIM_DURATION_SHOW = 180;
-
-    private boolean mIsAnimating;
-
-    private BannerInterface.OnClickListener mLeftButtonListener;
-    private BannerInterface.OnClickListener mRightButtonListener;
-    private BannerInterface.OnDismissListener mOnDismissListener;
-    private BannerInterface.OnShowListener mOnShowListener;
-
-    public Banner(Context context) {
-        this(context, null);
+    private var mLayoutType = LAYOUT_UNDEFINED
+    private var mIsAnimating = false
+    private var mLeftButtonListener: BannerInterface.OnClickListener? = null
+    private var mRightButtonListener: BannerInterface.OnClickListener? = null
+    private var mOnDismissListener: BannerInterface.OnDismissListener? = null
+    private var mOnShowListener: BannerInterface.OnShowListener? = null
+    private fun loadDimens(context: Context) {
+        mWideLayout = context.resources.getBoolean(R.bool.mb_wide_layout)
+        mIconSize = getDimen(R.dimen.mb_icon_size)
+        mIconMarginStart = getDimen(R.dimen.mb_icon_margin_start)
+        mMessageMarginStart = getDimen(R.dimen.mb_message_margin_start)
+        mMessageMarginEndSingleLine = getDimen(R.dimen.mb_message_margin_end_singleline)
+        mMessageMarginEndMultiline = getDimen(R.dimen.mb_message_margin_end_multiline)
+        mMessageMarginBottomMultiline = getDimen(R.dimen.mb_message_margin_bottom_multiline)
+        mMessageMarginBottomWithIcon = getDimen(R.dimen.mb_message_margin_bottom_with_icon)
+        mLineHeight = getDimen(R.dimen.mb_line_height)
+        mContainerPaddingTopOneLine = getDimen(R.dimen.mb_container_padding_top_singleline)
+        mContainerPaddingTopMultiline = getDimen(R.dimen.mb_container_padding_top_multiline)
     }
 
-    public Banner(Context context, AttributeSet attrs) {
-        this(context, attrs, R.attr.bannerStyle);
-    }
-
-    public Banner(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        loadDimens(context);
-        initViewGroup(context);
-        retrieveAttrs(context, attrs, defStyleAttr);
-    }
-
-    private void loadDimens(Context context) {
-        mWideLayout = context.getResources().getBoolean(R.bool.mb_wide_layout);
-
-        mIconSize = getDimen(R.dimen.mb_icon_size);
-        mIconMarginStart = getDimen(R.dimen.mb_icon_margin_start);
-
-        mMessageMarginStart = getDimen(R.dimen.mb_message_margin_start);
-        mMessageMarginEndSingleLine = getDimen(R.dimen.mb_message_margin_end_singleline);
-        mMessageMarginEndMultiline = getDimen(R.dimen.mb_message_margin_end_multiline);
-        mMessageMarginBottomMultiline = getDimen(R.dimen.mb_message_margin_bottom_multiline);
-        mMessageMarginBottomWithIcon = getDimen(R.dimen.mb_message_margin_bottom_with_icon);
-
-        mLineHeight = getDimen(R.dimen.mb_line_height);
-
-        mContainerPaddingTopOneLine = getDimen(R.dimen.mb_container_padding_top_singleline);
-        mContainerPaddingTopMultiline = getDimen(R.dimen.mb_container_padding_top_multiline);
-    }
-
-    private void initViewGroup(Context context) {
+    private fun initViewGroup(context: Context) {
         // CONTENT CONTAINER
-        LayoutParams layoutParams = new LayoutParams(MATCH_PARENT, WRAP_CONTENT);
-
-        mContentContainer = new RelativeLayout(context);
-        mContentContainer.setId(R.id.mb_container_content);
-        mContentContainer.setLayoutParams(layoutParams);
+        var layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
+        mContentContainer = RelativeLayout(context)
+        mContentContainer.id = R.id.mb_container_content
+        mContentContainer.layoutParams = layoutParams
 
         // ICON VIEW
-        RelativeLayout.LayoutParams relativeLayoutParams = new RelativeLayout.LayoutParams(
-                mIconSize, mIconSize);
+        var relativeLayoutParams = RelativeLayout.LayoutParams(
+            mIconSize, mIconSize
+        )
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            relativeLayoutParams.setMarginStart(mIconMarginStart);
-            relativeLayoutParams.addRule(ALIGN_PARENT_START, TRUE);
+            relativeLayoutParams.marginStart = mIconMarginStart
+            relativeLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_START, RelativeLayout.TRUE)
         } else {
-            relativeLayoutParams.leftMargin = mIconMarginStart;
-            relativeLayoutParams.addRule(ALIGN_PARENT_LEFT, TRUE);
+            relativeLayoutParams.leftMargin = mIconMarginStart
+            relativeLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE)
         }
-
-        mIconView = new AppCompatImageView(context);
-        mIconView.setId(R.id.mb_icon);
-        mIconView.setLayoutParams(relativeLayoutParams);
-        mIconView.setVisibility(GONE);
+        mIconView = AppCompatImageView(context)
+        mIconView.id = R.id.mb_icon
+        mIconView.layoutParams = relativeLayoutParams
+        mIconView.visibility = GONE
 
         // MESSAGE VIEW
-        relativeLayoutParams = new RelativeLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
+        relativeLayoutParams =
+            RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            relativeLayoutParams.setMarginStart(mMessageMarginStart);
-            relativeLayoutParams.addRule(ALIGN_PARENT_START, TRUE);
+            relativeLayoutParams.marginStart = mMessageMarginStart
+            relativeLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_START, RelativeLayout.TRUE)
         } else {
-            relativeLayoutParams.leftMargin = mMessageMarginStart;
-            relativeLayoutParams.addRule(ALIGN_PARENT_LEFT, TRUE);
+            relativeLayoutParams.leftMargin = mMessageMarginStart
+            relativeLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE)
         }
-
-        mMessageView = new MessageView(context);
-        mMessageView.setId(R.id.mb_message);
-        mMessageView.setLayoutParams(relativeLayoutParams);
+        mMessageView = MessageView(context)
+        mMessageView.id = R.id.mb_message
+        mMessageView.layoutParams = relativeLayoutParams
 
         // BUTTONS CONTAINER
-        relativeLayoutParams = new RelativeLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
+        relativeLayoutParams =
+            RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            relativeLayoutParams.addRule(ALIGN_PARENT_END, TRUE);
+            relativeLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_END, RelativeLayout.TRUE)
         } else {
-            relativeLayoutParams.addRule(ALIGN_PARENT_RIGHT, TRUE);
+            relativeLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, RelativeLayout.TRUE)
         }
-
-        mButtonsContainer = new ButtonsContainer(context);
-        mButtonsContainer.setId(R.id.mb_container_buttons);
-        mButtonsContainer.setLayoutParams(relativeLayoutParams);
-
-        mLeftButton = mButtonsContainer.getLeftButton();
-        mRightButton = mButtonsContainer.getRightButton();
+        mButtonsContainer = ButtonsContainer(context)
+        mButtonsContainer.id = R.id.mb_container_buttons
+        mButtonsContainer.layoutParams = relativeLayoutParams
+        mLeftButton = mButtonsContainer.leftButton
+        mRightButton = mButtonsContainer.rightButton
 
         // LINE
-        layoutParams = new LayoutParams(MATCH_PARENT, mLineHeight);
-
-        mLine = new View(context);
-        mLine.setId(R.id.mb_line);
-        mLine.setLayoutParams(layoutParams);
-
-        addView(mContentContainer);
-        addView(mLine);
-
-        mContentContainer.addView(mIconView);
-        mContentContainer.addView(mMessageView);
-        mContentContainer.addView(mButtonsContainer);
+        layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, mLineHeight)
+        mLine = View(context)
+        mLine.id = R.id.mb_line
+        mLine.layoutParams = layoutParams
+        addView(mContentContainer)
+        addView(mLine)
+        mContentContainer.addView(mIconView)
+        mContentContainer.addView(mMessageView)
+        mContentContainer.addView(mButtonsContainer)
     }
 
-    private void retrieveAttrs(Context context, AttributeSet attrs, int defStyleAttr) {
-        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.Banner, defStyleAttr,
-                R.style.Widget_Material_Banner);
-
+    private fun retrieveAttrs(context: Context, attrs: AttributeSet?, defStyleAttr: Int) {
+        val a = context.obtainStyledAttributes(
+            attrs, R.styleable.Banner, defStyleAttr,
+            R.style.Widget_Material_Banner
+        )
         if (a.hasValue(R.styleable.Banner_icon)) {
-            setIcon(a.getResourceId(R.styleable.Banner_icon, -1));
+            setIcon(a.getResourceId(R.styleable.Banner_icon, -1))
         }
         if (a.hasValue(R.styleable.Banner_iconTint)) {
-            setIconTintColorInternal(a.getColor(R.styleable.Banner_iconTint, Color.BLACK));
+            setIconTintColorInternal(a.getColor(R.styleable.Banner_iconTint, Color.BLACK))
         }
         if (a.hasValue(R.styleable.Banner_messageText)) {
-            setMessage(a.getString(R.styleable.Banner_messageText));
+            setMessage(a.getString(R.styleable.Banner_messageText))
         }
         if (a.hasValue(R.styleable.Banner_buttonLeftText)) {
-            setLeftButton(a.getString(R.styleable.Banner_buttonLeftText), null);
+            setLeftButton(a.getString(R.styleable.Banner_buttonLeftText), null)
         }
         if (a.hasValue(R.styleable.Banner_buttonRightText)) {
-            setRightButton(a.getString(R.styleable.Banner_buttonRightText), null);
+            setRightButton(a.getString(R.styleable.Banner_buttonRightText), null)
         }
-
         if (a.hasValue(R.styleable.Banner_messageTextAppearance)) {
-            mMessageView.setTextAppearance(context,
-                    a.getResourceId(R.styleable.Banner_messageTextAppearance,
-                            R.style.TextAppearance_Banner_Message));
+            TextViewCompat.setTextAppearance(
+                mMessageView, a.getResourceId(
+                    R.styleable.Banner_messageTextAppearance,
+                    R.style.TextAppearance_Banner_Message
+                )
+            )
         }
         if (a.hasValue(R.styleable.Banner_buttonsTextAppearance)) {
-            int textAppearance = a.getResourceId(R.styleable.Banner_buttonsTextAppearance,
-                    R.style.TextAppearance_Banner_Button);
-            mLeftButton.setTextAppearance(context, textAppearance);
-            mRightButton.setTextAppearance(context, textAppearance);
+            val textAppearance = a.getResourceId(
+                R.styleable.Banner_buttonsTextAppearance,
+                R.style.TextAppearance_Banner_Button
+            )
+            TextViewCompat.setTextAppearance(mLeftButton, textAppearance)
+            TextViewCompat.setTextAppearance(mRightButton, textAppearance)
         }
-
         if (a.hasValue(R.styleable.Banner_fontPath)) {
-            Typeface typeface = getFont(a.getString(R.styleable.Banner_fontPath));
-            mLeftButton.setTypeface(typeface);
-            mRightButton.setTypeface(typeface);
-            mMessageView.setTypeface(typeface);
+            val typeface = getFont(a.getString(R.styleable.Banner_fontPath))
+            mLeftButton.typeface = typeface
+            mRightButton.typeface = typeface
+            mMessageView.typeface = typeface
         }
         if (a.hasValue(R.styleable.Banner_buttonsFontPath)) {
-            Typeface typeface = getFont(a.getString(R.styleable.Banner_buttonsFontPath));
-            mLeftButton.setTypeface(typeface);
-            mRightButton.setTypeface(typeface);
+            val typeface = getFont(a.getString(R.styleable.Banner_buttonsFontPath))
+            mLeftButton.typeface = typeface
+            mRightButton.typeface = typeface
         }
         if (a.hasValue(R.styleable.Banner_messageFontPath)) {
-            mMessageView.setTypeface(getFont(a.getString(R.styleable.Banner_messageFontPath)));
+            mMessageView.typeface = getFont(a.getString(R.styleable.Banner_messageFontPath))
         }
-
         if (a.hasValue(R.styleable.Banner_messageTextColor)) {
-            mMessageView.setTextColor(a.getColor(R.styleable.Banner_messageTextColor, Color.BLACK));
+            mMessageView.setTextColor(
+                a.getColor(
+                    R.styleable.Banner_messageTextColor,
+                    Color.BLACK
+                )
+            )
         }
         if (a.hasValue(R.styleable.Banner_buttonsTextColor)) {
-            mLeftButton.setTextColor(a.getColor(R.styleable.Banner_buttonsTextColor, Color.BLACK));
-            mRightButton.setTextColor(a.getColor(R.styleable.Banner_buttonsTextColor, Color.BLACK));
+            mLeftButton.setTextColor(a.getColor(R.styleable.Banner_buttonsTextColor, Color.BLACK))
+            mRightButton.setTextColor(
+                a.getColor(
+                    R.styleable.Banner_buttonsTextColor,
+                    Color.BLACK
+                )
+            )
         }
         if (a.hasValue(R.styleable.Banner_buttonLeftTextColor)) {
             mLeftButton.setTextColor(
-                    a.getColor(R.styleable.Banner_buttonLeftTextColor, Color.BLACK));
+                a.getColor(R.styleable.Banner_buttonLeftTextColor, Color.BLACK)
+            )
         }
         if (a.hasValue(R.styleable.Banner_buttonRightTextColor)) {
             mRightButton.setTextColor(
-                    a.getColor(R.styleable.Banner_buttonRightTextColor, Color.BLACK));
+                a.getColor(R.styleable.Banner_buttonRightTextColor, Color.BLACK)
+            )
         }
         if (a.hasValue(R.styleable.Banner_buttonsRippleColor)) {
-            mLeftButton.setRippleColor(ColorStateList.valueOf(
-                    a.getColor(R.styleable.Banner_buttonsRippleColor, Color.BLACK)));
-            mRightButton.setRippleColor(ColorStateList.valueOf(
-                    a.getColor(R.styleable.Banner_buttonsRippleColor, Color.BLACK)));
+            mLeftButton.rippleColor = ColorStateList.valueOf(
+                a.getColor(R.styleable.Banner_buttonsRippleColor, Color.BLACK)
+            )
+            mRightButton.rippleColor = ColorStateList.valueOf(
+                a.getColor(R.styleable.Banner_buttonsRippleColor, Color.BLACK)
+            )
         }
         if (a.hasValue(R.styleable.Banner_backgroundColor)) {
-            setBackgroundColor(a.getColor(R.styleable.Banner_backgroundColor, 0));
+            setBackgroundColor(a.getColor(R.styleable.Banner_backgroundColor, 0))
         }
         if (a.hasValue(R.styleable.Banner_lineColor)) {
-            mLine.setBackgroundColor(a.getColor(R.styleable.Banner_lineColor, Color.BLACK));
+            mLine.setBackgroundColor(a.getColor(R.styleable.Banner_lineColor, Color.BLACK))
         }
         if (a.hasValue(R.styleable.Banner_lineOpacity)) {
-            mLine.setAlpha(a.getFloat(R.styleable.Banner_lineOpacity, 0.12f));
+            mLine.alpha = a.getFloat(R.styleable.Banner_lineOpacity, 0.12f)
         }
-
-        int contentPaddingStart = a.getDimensionPixelSize(R.styleable.Banner_contentPaddingStart,
-                0);
-        int contentPaddingEnd = a.getDimensionPixelSize(R.styleable.Banner_contentPaddingEnd, 0);
-        setContainerPadding(contentPaddingStart, -1, contentPaddingEnd);
-
-        a.recycle();
+        val contentPaddingStart = a.getDimensionPixelSize(
+            R.styleable.Banner_contentPaddingStart,
+            0
+        )
+        val contentPaddingEnd = a.getDimensionPixelSize(R.styleable.Banner_contentPaddingEnd, 0)
+        setContainerPadding(contentPaddingStart, -1, contentPaddingEnd)
+        a.recycle()
     }
 
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         if (DEBUG) {
-            Log.e("Banner onMeasure w", MeasureSpec.toString(widthMeasureSpec));
-            Log.e("Banner onMeasure h", MeasureSpec.toString(heightMeasureSpec));
+            Log.e("Banner onMeasure w", MeasureSpec.toString(widthMeasureSpec))
+            Log.e("Banner onMeasure h", MeasureSpec.toString(heightMeasureSpec))
         }
-
-        int widthSpecSize = MeasureSpec.getSize(widthMeasureSpec);
-
-        int widthUsed = getContainerHorizontalPadding();
-        int heightUsed = 0;
+        val widthSpecSize = MeasureSpec.getSize(widthMeasureSpec)
+        var widthUsed = containerHorizontalPadding
 
         // Measure the message view
-        measureChild(mMessageView, widthMeasureSpec, heightMeasureSpec);
+        measureChild(mMessageView, widthMeasureSpec, heightMeasureSpec)
         // Adding the start margin and possible single line end margin
-        int messageViewWidth =
-                mMessageView.getMeasuredWidth() + mMessageMarginStart + mMessageMarginEndSingleLine;
+        val messageViewWidth =
+            mMessageView.measuredWidth + mMessageMarginStart + mMessageMarginEndSingleLine
 
         // Measure the icon
-        int iconViewWidth = 0;
+        var iconViewWidth = 0
         if (mIcon != null) {
-            measureChild(mIconView, widthMeasureSpec, heightMeasureSpec);
-            iconViewWidth = mIconView.getMeasuredWidth() + mIconMarginStart;
+            measureChild(mIconView, widthMeasureSpec, heightMeasureSpec)
+            iconViewWidth = mIconView.measuredWidth + mIconMarginStart
         }
-
-        measureChild(mButtonsContainer, widthMeasureSpec, heightMeasureSpec);
-        int buttonsWidth = mButtonsContainer.getMeasuredWidth();
+        measureChild(mButtonsContainer, widthMeasureSpec, heightMeasureSpec)
+        val buttonsWidth = mButtonsContainer.measuredWidth
 
         // Update the layout params
         if (widthSpecSize - widthUsed - iconViewWidth - buttonsWidth >= messageViewWidth) {
             // The message view fits in one line with the icon and the both buttons
-            onSingleLine();
+            onSingleLine()
         } else {
             // Doesn't fit
-            onMultiline();
+            onMultiline()
         }
-
-        measureChild(mContentContainer, widthMeasureSpec, heightMeasureSpec);
-        measureChild(mLine, widthMeasureSpec, heightMeasureSpec);
-
-        widthUsed = mContentContainer.getMeasuredWidth();
-        heightUsed = mContentContainer.getMeasuredHeight() + mLine.getMeasuredHeight();
-
-        setMeasuredDimension(widthUsed, heightUsed);
+        measureChild(mContentContainer, widthMeasureSpec, heightMeasureSpec)
+        measureChild(mLine, widthMeasureSpec, heightMeasureSpec)
+        widthUsed = mContentContainer.measuredWidth
+        val heightUsed: Int = mContentContainer.measuredHeight + mLine.measuredHeight
+        setMeasuredDimension(widthUsed, heightUsed)
     }
 
-    private void onSingleLine() {
+    private fun onSingleLine() {
         if (mLayoutType == LAYOUT_SINGLE_LINE) {
             // Skip unnecessary layout params changes. The views already have the correct ones.
-            return;
+            return
         }
-
-        setContainerPadding(-1, mContainerPaddingTopOneLine, -1);
-
-        RelativeLayout.LayoutParams messageLayoutParams =
-                (RelativeLayout.LayoutParams) mMessageView.getLayoutParams();
-        RelativeLayout.LayoutParams buttonsContainerLayoutParams =
-                (RelativeLayout.LayoutParams) mButtonsContainer.getLayoutParams();
-
+        setContainerPadding(-1, mContainerPaddingTopOneLine, -1)
+        val messageLayoutParams = mMessageView.layoutParams as RelativeLayout.LayoutParams
+        val buttonsContainerLayoutParams =
+            mButtonsContainer.layoutParams as RelativeLayout.LayoutParams
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            messageLayoutParams.addRule(START_OF, mButtonsContainer.getId());
-            messageLayoutParams.setMarginEnd(mMessageMarginEndSingleLine);
+            messageLayoutParams.addRule(RelativeLayout.START_OF, mButtonsContainer.id)
+            messageLayoutParams.marginEnd = mMessageMarginEndSingleLine
         } else {
-            messageLayoutParams.addRule(LEFT_OF, mButtonsContainer.getId());
-            messageLayoutParams.rightMargin = mMessageMarginEndSingleLine;
+            messageLayoutParams.addRule(RelativeLayout.LEFT_OF, mButtonsContainer.id)
+            messageLayoutParams.rightMargin = mMessageMarginEndSingleLine
         }
-        messageLayoutParams.addRule(ALIGN_BASELINE, mButtonsContainer.getId());
-        messageLayoutParams.bottomMargin = 0;
-        mMessageView.setLayoutParams(messageLayoutParams);
-
-        buttonsContainerLayoutParams.addRule(ALIGN_BASELINE, 0);
-        buttonsContainerLayoutParams.addRule(BELOW, 0);
-        mButtonsContainer.setLayoutParams(buttonsContainerLayoutParams);
-
-        mLayoutType = LAYOUT_SINGLE_LINE;
+        messageLayoutParams.addRule(RelativeLayout.ALIGN_BASELINE, mButtonsContainer.id)
+        messageLayoutParams.bottomMargin = 0
+        mMessageView.layoutParams = messageLayoutParams
+        buttonsContainerLayoutParams.addRule(RelativeLayout.ALIGN_BASELINE, 0)
+        buttonsContainerLayoutParams.addRule(RelativeLayout.BELOW, 0)
+        mButtonsContainer.layoutParams = buttonsContainerLayoutParams
+        mLayoutType = LAYOUT_SINGLE_LINE
     }
 
-    private void onMultiline() {
+    private fun onMultiline() {
         if (mLayoutType == LAYOUT_MULTILINE) {
             // Skip unnecessary layout params changes. The views already have the correct ones.
-            return;
+            return
         }
-
-        setContainerPadding(-1, mContainerPaddingTopMultiline, -1);
-
-        RelativeLayout.LayoutParams messageLayoutParams =
-                (RelativeLayout.LayoutParams) mMessageView.getLayoutParams();
-        RelativeLayout.LayoutParams buttonsContainerLayoutParams =
-                (RelativeLayout.LayoutParams) mButtonsContainer.getLayoutParams();
-
+        setContainerPadding(-1, mContainerPaddingTopMultiline, -1)
+        val messageLayoutParams = mMessageView.layoutParams as RelativeLayout.LayoutParams
+        val buttonsContainerLayoutParams =
+            mButtonsContainer.layoutParams as RelativeLayout.LayoutParams
         if (mWideLayout) {
-            if (mButtonsContainer.getMeasuredWidth()
-                    > (getMeasuredWidth() - getContainerHorizontalPadding()) / 2) {
+            if (mButtonsContainer.measuredWidth
+                > (measuredWidth - containerHorizontalPadding) / 2
+            ) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                    messageLayoutParams.addRule(START_OF, 0);
+                    messageLayoutParams.addRule(RelativeLayout.START_OF, 0)
                 } else {
-                    messageLayoutParams.addRule(LEFT_OF, 0);
+                    messageLayoutParams.addRule(RelativeLayout.LEFT_OF, 0)
                 }
-                messageLayoutParams.bottomMargin = mIcon
-                        == null ? mMessageMarginBottomMultiline : mMessageMarginBottomWithIcon;
-
-                buttonsContainerLayoutParams.addRule(BELOW, mMessageView.getId());
+                messageLayoutParams.bottomMargin = if (mIcon
+                    == null
+                ) mMessageMarginBottomMultiline else mMessageMarginBottomWithIcon
+                buttonsContainerLayoutParams.addRule(RelativeLayout.BELOW, mMessageView.id)
             } else {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                    messageLayoutParams.addRule(START_OF, mButtonsContainer.getId());
+                    messageLayoutParams.addRule(RelativeLayout.START_OF, mButtonsContainer.id)
                 } else {
-                    messageLayoutParams.addRule(LEFT_OF, mButtonsContainer.getId());
+                    messageLayoutParams.addRule(RelativeLayout.LEFT_OF, mButtonsContainer.id)
                 }
-
-                buttonsContainerLayoutParams.addRule(ALIGN_BASELINE, mMessageView.getId());
+                buttonsContainerLayoutParams.addRule(
+                    RelativeLayout.ALIGN_BASELINE,
+                    mMessageView.id
+                )
             }
         } else {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                messageLayoutParams.addRule(START_OF, 0);
+                messageLayoutParams.addRule(RelativeLayout.START_OF, 0)
             } else {
-                messageLayoutParams.addRule(LEFT_OF, 0);
+                messageLayoutParams.addRule(RelativeLayout.LEFT_OF, 0)
             }
             messageLayoutParams.bottomMargin =
-                    mIcon == null ? mMessageMarginBottomMultiline : mMessageMarginBottomWithIcon;
-
-            buttonsContainerLayoutParams.addRule(BELOW, mMessageView.getId());
+                if (mIcon == null) mMessageMarginBottomMultiline else mMessageMarginBottomWithIcon
+            buttonsContainerLayoutParams.addRule(RelativeLayout.BELOW, mMessageView.id)
         }
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            messageLayoutParams.setMarginEnd(mMessageMarginEndMultiline);
+            messageLayoutParams.marginEnd = mMessageMarginEndMultiline
         } else {
-            messageLayoutParams.rightMargin = mMessageMarginEndMultiline;
+            messageLayoutParams.rightMargin = mMessageMarginEndMultiline
         }
-        messageLayoutParams.addRule(ALIGN_BASELINE, 0);
-
-        mMessageView.setLayoutParams(messageLayoutParams);
-        mButtonsContainer.setLayoutParams(buttonsContainerLayoutParams);
-
-        mLayoutType = LAYOUT_MULTILINE;
+        messageLayoutParams.addRule(RelativeLayout.ALIGN_BASELINE, 0)
+        mMessageView.layoutParams = messageLayoutParams
+        mButtonsContainer.layoutParams = buttonsContainerLayoutParams
+        mLayoutType = LAYOUT_MULTILINE
     }
 
-    private void updateParamsOnIconChanged() {
-        RelativeLayout.LayoutParams messageLayoutParams =
-                (RelativeLayout.LayoutParams) mMessageView.getLayoutParams();
-        int parentStart = mIcon == null ? TRUE : 0;
-        int toEndOfId = mIcon == null ? 0 : mIconView.getId();
+    private fun updateParamsOnIconChanged() {
+        val messageLayoutParams = mMessageView.layoutParams as RelativeLayout.LayoutParams
+        val parentStart = if (mIcon == null) RelativeLayout.TRUE else 0
+        val toEndOfId = if (mIcon == null) 0 else mIconView.id
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            messageLayoutParams.addRule(ALIGN_PARENT_START, parentStart);
-            messageLayoutParams.addRule(END_OF, toEndOfId);
+            messageLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_START, parentStart)
+            messageLayoutParams.addRule(RelativeLayout.END_OF, toEndOfId)
         } else {
-            messageLayoutParams.addRule(ALIGN_PARENT_LEFT, parentStart);
-            messageLayoutParams.addRule(RIGHT_OF, toEndOfId);
+            messageLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT, parentStart)
+            messageLayoutParams.addRule(RelativeLayout.RIGHT_OF, toEndOfId)
         }
-        mMessageView.setLayoutParams(messageLayoutParams);
+        mMessageView.layoutParams = messageLayoutParams
     }
 
-    @Override
-    protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        int y = mContentContainer.getMeasuredHeight();
-        mContentContainer.layout(0, 0, mContentContainer.getMeasuredWidth(), y);
-        mLine.layout(0, y, mLine.getMeasuredWidth(), y + mLine.getMeasuredHeight());
+    override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
+        val y = mContentContainer.measuredHeight
+        mContentContainer.layout(0, 0, mContentContainer.measuredWidth, y)
+        mLine.layout(0, y, mLine.measuredWidth, y + mLine.measuredHeight)
     }
 
     /**
@@ -512,16 +440,15 @@ public class Banner extends ViewGroup implements BannerInterface {
      *
      * @param icon The drawable to use as the icon or null if you don't want an icon
      */
-    public void setIcon(@Nullable Drawable icon) {
-        mIcon = icon;
+    fun setIcon(icon: Drawable?) {
+        mIcon = icon
         if (mIcon != null) {
-            mIconView.setVisibility(VISIBLE);
-            mIconView.setImageDrawable(icon);
+            mIconView.visibility = VISIBLE
+            mIconView.setImageDrawable(icon)
         } else {
-            mIconView.setVisibility(GONE);
+            mIconView.visibility = GONE
         }
-
-        updateParamsOnIconChanged();
+        updateParamsOnIconChanged()
     }
 
     /**
@@ -529,8 +456,8 @@ public class Banner extends ViewGroup implements BannerInterface {
      *
      * @param iconId The resourceId of the drawable to use as the icon
      */
-    public void setIcon(@DrawableRes int iconId) {
-        setIcon(ContextCompat.getDrawable(getContext(), iconId));
+    fun setIcon(@DrawableRes iconId: Int) {
+        setIcon(ContextCompat.getDrawable(context, iconId))
     }
 
     /**
@@ -538,9 +465,9 @@ public class Banner extends ViewGroup implements BannerInterface {
      *
      * @param text The text to display in the banner
      */
-    public void setMessage(CharSequence text) {
-        mMessageText = text;
-        mMessageView.setText(text);
+    fun setMessage(text: CharSequence?) {
+        mMessageText = text
+        mMessageView.text = text
     }
 
     /**
@@ -548,138 +475,142 @@ public class Banner extends ViewGroup implements BannerInterface {
      *
      * @param textId The resource id of the text to display
      */
-    public void setMessage(@StringRes int textId) {
-        setMessage(getContext().getString(textId));
+    fun setMessage(@StringRes textId: Int) {
+        setMessage(context.getString(textId))
     }
 
     /**
      * Sets a listener to be invoked when the left button of the banner is pressed.
-     * <p>
+     *
+     *
      * Usually used for the dismissive action.
-     * </p>
+     *
      *
      * @param text     The text to display in the left button
-     * @param listener The {@link BannerInterface.OnClickListener} to use
-     * @see #setLeftButton(int, BannerInterface.OnClickListener)
+     * @param listener The [BannerInterface.OnClickListener] to use
+     * @see .setLeftButton
      */
-    public void setLeftButton(String text, @Nullable BannerInterface.OnClickListener listener) {
-        mLeftButtonText = text;
+    fun setLeftButton(text: String?, listener: BannerInterface.OnClickListener?) {
+        mLeftButtonText = text
         if (mLeftButtonText != null) {
-            mLeftButton.setVisibility(VISIBLE);
-            mLeftButton.setText(text);
-            setLeftButtonListener(listener);
+            mLeftButton.visibility = VISIBLE
+            mLeftButton.text = text
+            setLeftButtonListener(listener)
         } else {
-            mLeftButton.setVisibility(GONE);
+            mLeftButton.visibility = GONE
         }
     }
 
     /**
      * Sets a listener to be invoked when the left button of the banner is pressed.
-     * <p>
+     *
+     *
      * Usually used for the dismissive action.
-     * </p>
+     *
      *
      * @param textId   The resource id of the text to display in the left button
-     * @param listener The {@link BannerInterface.OnClickListener} to use
-     * @see #setLeftButton(String, BannerInterface.OnClickListener)
+     * @param listener The [BannerInterface.OnClickListener] to use
+     * @see .setLeftButton
      */
-    public void setLeftButton(@StringRes int textId,
-                              @Nullable BannerInterface.OnClickListener listener) {
-        setLeftButton(getContext().getString(textId), listener);
+    fun setLeftButton(
+        @StringRes textId: Int,
+        listener: BannerInterface.OnClickListener?
+    ) {
+        setLeftButton(context.getString(textId), listener)
     }
 
     /**
      * Sets a listener to be invoked when the left button of the banner is pressed.
-     * <p>
+     *
+     *
      * Usually used for the dismissive action.
-     * </p>
      *
-     * @param listener The {@link BannerInterface.OnClickListener} to use
+     *
+     * @param listener The [BannerInterface.OnClickListener] to use
      */
-    public void setLeftButtonListener(@Nullable BannerInterface.OnClickListener listener) {
-        mLeftButtonListener = listener;
-        mLeftButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mLeftButtonListener != null) {
-                    mLeftButtonListener.onClick(Banner.this);
-                }
+    fun setLeftButtonListener(listener: BannerInterface.OnClickListener?) {
+        mLeftButtonListener = listener
+        mLeftButton.setOnClickListener {
+            if (mLeftButtonListener != null) {
+                mLeftButtonListener!!.onClick(this@Banner)
             }
-        });
-    }
-
-    /**
-     * Sets a listener to be invoked when the right button of the banner is pressed.
-     * <p>
-     * Usually used for the confirming action.
-     * </p>
-     *
-     * @param text     The text to display in the right button
-     * @param listener The {@link BannerInterface.OnClickListener} to use
-     * @see #setRightButton(int, BannerInterface.OnClickListener)
-     */
-    public void setRightButton(String text, @Nullable BannerInterface.OnClickListener listener) {
-        mRightButtonText = text;
-        if (mRightButtonText != null) {
-            mRightButton.setVisibility(VISIBLE);
-            mRightButton.setText(text);
-            setRightButtonListener(listener);
-        } else {
-            mRightButton.setVisibility(GONE);
         }
     }
 
     /**
      * Sets a listener to be invoked when the right button of the banner is pressed.
-     * <p>
-     * Usually used for the confirming action.
-     * </p>
      *
-     * @param textId   The resource id of the text to display in the right button
-     * @param listener The {@link BannerInterface.OnClickListener} to use
-     * @see #setRightButton(String, BannerInterface.OnClickListener)
+     *
+     * Usually used for the confirming action.
+     *
+     *
+     * @param text     The text to display in the right button
+     * @param listener The [BannerInterface.OnClickListener] to use
+     * @see .setRightButton
      */
-    public void setRightButton(@StringRes int textId,
-                               @Nullable BannerInterface.OnClickListener listener) {
-        setRightButton(getContext().getString(textId), listener);
+    fun setRightButton(text: String?, listener: BannerInterface.OnClickListener?) {
+        mRightButtonText = text
+        if (mRightButtonText != null) {
+            mRightButton.visibility = VISIBLE
+            mRightButton.text = text
+            setRightButtonListener(listener)
+        } else {
+            mRightButton.visibility = GONE
+        }
     }
 
     /**
      * Sets a listener to be invoked when the right button of the banner is pressed.
-     * <p>
-     * Usually used for the confirming action.
-     * </p>
      *
-     * @param listener The {@link BannerInterface.OnClickListener} to use
+     *
+     * Usually used for the confirming action.
+     *
+     *
+     * @param textId   The resource id of the text to display in the right button
+     * @param listener The [BannerInterface.OnClickListener] to use
+     * @see .setRightButton
      */
-    public void setRightButtonListener(@Nullable BannerInterface.OnClickListener listener) {
-        mRightButtonListener = listener;
-        mRightButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mRightButtonListener != null) {
-                    mRightButtonListener.onClick(Banner.this);
-                }
+    fun setRightButton(
+        @StringRes textId: Int,
+        listener: BannerInterface.OnClickListener?
+    ) {
+        setRightButton(context.getString(textId), listener)
+    }
+
+    /**
+     * Sets a listener to be invoked when the right button of the banner is pressed.
+     *
+     *
+     * Usually used for the confirming action.
+     *
+     *
+     * @param listener The [BannerInterface.OnClickListener] to use
+     */
+    fun setRightButtonListener(listener: BannerInterface.OnClickListener?) {
+        mRightButtonListener = listener
+        mRightButton.setOnClickListener {
+            if (mRightButtonListener != null) {
+                mRightButtonListener!!.onClick(this@Banner)
             }
-        });
+        }
     }
 
     /**
      * Sets a listener to be invoked when the banner is dismissed.
      *
-     * @param listener The {@link BannerInterface.OnDismissListener} to use
+     * @param listener The [BannerInterface.OnDismissListener] to use
      */
-    public void setOnDismissListener(@Nullable BannerInterface.OnDismissListener listener) {
-        mOnDismissListener = listener;
+    fun setOnDismissListener(listener: BannerInterface.OnDismissListener?) {
+        mOnDismissListener = listener
     }
 
     /**
      * Sets a listener to be invoked when the banner is shown.
      *
-     * @param listener The {@link BannerInterface.OnShowListener} to use
+     * @param listener The [BannerInterface.OnShowListener] to use
      */
-    public void setOnShowListener(@Nullable BannerInterface.OnShowListener listener) {
-        mOnShowListener = listener;
+    fun setOnShowListener(listener: BannerInterface.OnShowListener?) {
+        mOnShowListener = listener
     }
 
     /**
@@ -687,40 +618,40 @@ public class Banner extends ViewGroup implements BannerInterface {
      *
      * @param colorId the resource id of the color
      */
-    public void setIconTintColor(@ColorRes int colorId) {
-        setIconTintColorInternal(ContextCompat.getColor(getContext(), colorId));
+    fun setIconTintColor(@ColorRes colorId: Int) {
+        setIconTintColorInternal(ContextCompat.getColor(context, colorId))
     }
 
-    private void setIconTintColorInternal(@ColorInt int color) {
-        ImageViewCompat.setImageTintList(mIconView, ColorStateList.valueOf(color));
+    private fun setIconTintColorInternal(@ColorInt color: Int) {
+        ImageViewCompat.setImageTintList(mIconView, ColorStateList.valueOf(color))
     }
 
     /**
      * Creates a new typeface from the specified font in the assets folder.
      *
-     * @param fontPath path to the font in the assets folder, e.g. <i>"fonts/Roboto-Medium.ttf"</i>
+     * @param fontPath path to the font in the assets folder, e.g. *"fonts/Roboto-Medium.ttf"*
      * @return Typeface The new typeface
      */
-    private Typeface getFont(String fontPath) {
-        Typeface typeface = null;
+    private fun getFont(fontPath: String?): Typeface? {
+        var typeface: Typeface? = null
         try {
-            typeface = Typeface.createFromAsset(getContext().getAssets(), fontPath);
-        } catch (Exception e) {
-            e.printStackTrace();
+            typeface = Typeface.createFromAsset(context.assets, fontPath)
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
-        return typeface;
+        return typeface
     }
 
     /**
      * Sets the font of the buttons and message.
      *
-     * @param fontPath path to the font in the assets folder, e.g. <i>"fonts/Roboto-Medium.ttf"</i>
+     * @param fontPath path to the font in the assets folder, e.g. *"fonts/Roboto-Medium.ttf"*
      */
-    public void setFont(String fontPath) {
-        Typeface typeface = getFont(fontPath);
-        mLeftButton.setTypeface(typeface);
-        mRightButton.setTypeface(typeface);
-        mMessageView.setTypeface(typeface);
+    fun setFont(fontPath: String?) {
+        val typeface = getFont(fontPath)
+        mLeftButton.typeface = typeface
+        mRightButton.typeface = typeface
+        mMessageView.typeface = typeface
     }
 
     /**
@@ -728,20 +659,20 @@ public class Banner extends ViewGroup implements BannerInterface {
      *
      * @param typeface typeface
      */
-    public void setFont(Typeface typeface) {
-        mLeftButton.setTypeface(typeface);
-        mRightButton.setTypeface(typeface);
-        mMessageView.setTypeface(typeface);
+    fun setFont(typeface: Typeface?) {
+        mLeftButton.typeface = typeface
+        mRightButton.typeface = typeface
+        mMessageView.typeface = typeface
     }
 
     /**
      * Sets the font of the message.
      *
-     * @param fontPath path to the font in the assets folder, e.g. <i>"fonts/Roboto-Medium.ttf"</i>
+     * @param fontPath path to the font in the assets folder, e.g. *"fonts/Roboto-Medium.ttf"*
      */
-    public void setMessageFont(String fontPath) {
-        Typeface typeface = getFont(fontPath);
-        mMessageView.setTypeface(typeface);
+    fun setMessageFont(fontPath: String?) {
+        val typeface = getFont(fontPath)
+        mMessageView.typeface = typeface
     }
 
     /**
@@ -749,19 +680,19 @@ public class Banner extends ViewGroup implements BannerInterface {
      *
      * @param typeface typeface
      */
-    public void setMessageFont(Typeface typeface) {
-        mMessageView.setTypeface(typeface);
+    fun setMessageFont(typeface: Typeface?) {
+        mMessageView.typeface = typeface
     }
 
     /**
      * Sets the font of the buttons.
      *
-     * @param fontPath path to the font in the assets folder, e.g. <i>"fonts/Roboto-Medium.ttf"</i>
+     * @param fontPath path to the font in the assets folder, e.g. *"fonts/Roboto-Medium.ttf"*
      */
-    public void setButtonsFont(String fontPath) {
-        Typeface typeface = getFont(fontPath);
-        mLeftButton.setTypeface(typeface);
-        mRightButton.setTypeface(typeface);
+    fun setButtonsFont(fontPath: String?) {
+        val typeface = getFont(fontPath)
+        mLeftButton.typeface = typeface
+        mRightButton.typeface = typeface
     }
 
     /**
@@ -769,10 +700,10 @@ public class Banner extends ViewGroup implements BannerInterface {
      *
      * @param typeface typeface
      */
-    public void setButtonsFont(Typeface typeface) {
-        mLeftButton.setTypeface(typeface);
-        mRightButton.setTypeface(typeface);
-        mMessageView.setTypeface(typeface);
+    fun setButtonsFont(typeface: Typeface?) {
+        mLeftButton.typeface = typeface
+        mRightButton.typeface = typeface
+        mMessageView.typeface = typeface
     }
 
     /**
@@ -780,8 +711,8 @@ public class Banner extends ViewGroup implements BannerInterface {
      *
      * @param resId The resource identifier of the style to apply.
      */
-    public void setMessageTextAppearance(@StyleRes int resId) {
-        TextViewCompat.setTextAppearance(mMessageView, resId);
+    fun setMessageTextAppearance(@StyleRes resId: Int) {
+        TextViewCompat.setTextAppearance(mMessageView, resId)
     }
 
     /**
@@ -789,8 +720,8 @@ public class Banner extends ViewGroup implements BannerInterface {
      *
      * @param colorId the resource id of the color
      */
-    public void setMessageTextColor(@ColorRes int colorId) {
-        mMessageView.setTextColor(ContextCompat.getColor(getContext(), colorId));
+    fun setMessageTextColor(@ColorRes colorId: Int) {
+        mMessageView.setTextColor(ContextCompat.getColor(context, colorId))
     }
 
     /**
@@ -798,9 +729,9 @@ public class Banner extends ViewGroup implements BannerInterface {
      *
      * @param resId The resource identifier of the style to apply.
      */
-    public void setButtonsTextAppearance(@StyleRes int resId) {
-        TextViewCompat.setTextAppearance(mLeftButton, resId);
-        TextViewCompat.setTextAppearance(mRightButton, resId);
+    fun setButtonsTextAppearance(@StyleRes resId: Int) {
+        TextViewCompat.setTextAppearance(mLeftButton, resId)
+        TextViewCompat.setTextAppearance(mRightButton, resId)
     }
 
     /**
@@ -808,9 +739,9 @@ public class Banner extends ViewGroup implements BannerInterface {
      *
      * @param colorId the resource id of the color
      */
-    public void setButtonsTextColor(@ColorRes int colorId) {
-        mLeftButton.setTextColor(ContextCompat.getColor(getContext(), colorId));
-        mRightButton.setTextColor(ContextCompat.getColor(getContext(), colorId));
+    fun setButtonsTextColor(@ColorRes colorId: Int) {
+        mLeftButton.setTextColor(ContextCompat.getColor(context, colorId))
+        mRightButton.setTextColor(ContextCompat.getColor(context, colorId))
     }
 
     /**
@@ -818,8 +749,8 @@ public class Banner extends ViewGroup implements BannerInterface {
      *
      * @param colorId the resource id of the color
      */
-    public void setLeftButtonTextColor(@ColorRes int colorId) {
-        mLeftButton.setTextColor(ContextCompat.getColor(getContext(), colorId));
+    fun setLeftButtonTextColor(@ColorRes colorId: Int) {
+        mLeftButton.setTextColor(ContextCompat.getColor(context, colorId))
     }
 
     /**
@@ -827,8 +758,8 @@ public class Banner extends ViewGroup implements BannerInterface {
      *
      * @param colorId the resource id of the color
      */
-    public void setRightButtonTextColor(@ColorRes int colorId) {
-        mRightButton.setTextColor(ContextCompat.getColor(getContext(), colorId));
+    fun setRightButtonTextColor(@ColorRes colorId: Int) {
+        mRightButton.setTextColor(ContextCompat.getColor(context, colorId))
     }
 
     /**
@@ -836,9 +767,9 @@ public class Banner extends ViewGroup implements BannerInterface {
      *
      * @param colorId the resource id of the color
      */
-    public void setButtonsRippleColor(@ColorRes int colorId) {
-        mLeftButton.setRippleColorResource(colorId);
-        mRightButton.setRippleColorResource(colorId);
+    fun setButtonsRippleColor(@ColorRes colorId: Int) {
+        mLeftButton.setRippleColorResource(colorId)
+        mRightButton.setRippleColorResource(colorId)
     }
 
     /**
@@ -846,8 +777,8 @@ public class Banner extends ViewGroup implements BannerInterface {
      *
      * @param colorId the resource id of the color
      */
-    public void setLineColor(@ColorRes int colorId) {
-        mLine.setBackgroundColor(ContextCompat.getColor(getContext(), colorId));
+    fun setLineColor(@ColorRes colorId: Int) {
+        mLine.setBackgroundColor(ContextCompat.getColor(context, colorId))
     }
 
     /**
@@ -856,248 +787,230 @@ public class Banner extends ViewGroup implements BannerInterface {
      *
      * @param lineOpacity the opacity of the line
      */
-    public void setLineOpacity(@FloatRange(from = 0.0, to = 1.0) float lineOpacity) {
-        mLine.setAlpha(lineOpacity);
+    fun setLineOpacity(@FloatRange(from = 0.0, to = 1.0) lineOpacity: Float) {
+        mLine.alpha = lineOpacity
     }
 
     /**
      * Sets a content start padding.
      *
      * @param dimenId the resource id of the dimension
-     * @see #setContentPaddingStartPx(int)
+     * @see .setContentPaddingStartPx
      */
-    public void setContentPaddingStart(@DimenRes int dimenId) {
-        setContentPaddingStartPx(getDimen(dimenId));
+    fun setContentPaddingStart(@DimenRes dimenId: Int) {
+        setContentPaddingStartPx(getDimen(dimenId))
     }
 
     /**
      * Sets a content start padding.
      *
      * @param dimenPx the padding in pixels
-     * @see #setContentPaddingStart(int)
+     * @see .setContentPaddingStart
      */
-    public void setContentPaddingStartPx(@Dimension int dimenPx) {
-        setContainerPadding(dimenPx, -1, -1);
+    fun setContentPaddingStartPx(@Dimension dimenPx: Int) {
+        setContainerPadding(dimenPx, -1, -1)
     }
 
     /**
      * Sets a content end padding.
      *
      * @param dimenId the resource id of the dimension
-     * @see #setContentPaddingEndPx(int)
+     * @see .setContentPaddingEndPx
      */
-    public void setContentPaddingEnd(@DimenRes int dimenId) {
-        setContentPaddingEndPx(getDimen(dimenId));
+    fun setContentPaddingEnd(@DimenRes dimenId: Int) {
+        setContentPaddingEndPx(getDimen(dimenId))
     }
 
     /**
      * Sets a content end padding.
      *
      * @param dimenPx the padding in pixels
-     * @see #setContentPaddingEnd(int)
+     * @see .setContentPaddingEnd
      */
-    public void setContentPaddingEndPx(@Dimension int dimenPx) {
-        setContainerPadding(-1, -1, dimenPx);
+    fun setContentPaddingEndPx(@Dimension dimenPx: Int) {
+        setContainerPadding(-1, -1, dimenPx)
     }
 
     /**
      * {@inheritDoc}
-     * <p>
-     * <strong>Note:</strong> this will not trigger {@link BannerInterface.OnShowListener} and
-     * {@link BannerInterface.OnDismissListener} callbacks. If you want them use
-     * {@link #setBannerVisibility(int)} instead.
-     * </p>
+     *
+     * **Note:** this will not trigger [BannerInterface.OnShowListener] and
+     * [BannerInterface.OnDismissListener] callbacks. If you want them use
+     * [setBannerVisibility] instead.
+     *
      */
-    @Override
-    public void setVisibility(int visibility) {
-        super.setVisibility(visibility);
+    override fun setVisibility(visibility: Int) {
+        super.setVisibility(visibility)
     }
 
     /**
      * Sets the visibility state of this banner.
-     * <p>
-     * This will trigger {@link BannerInterface.OnShowListener} callback if visibility set to
-     * {@link #VISIBLE} or {@link BannerInterface.OnDismissListener} callback if set to
-     * {@link #GONE}.
-     * </p>
-     * <p>
-     * If visibility set to {@link #INVISIBLE} none of these callbacks will be triggered.
-     * </p>
      *
-     * @param visibility One of {@link #VISIBLE}, {@link #INVISIBLE}, or {@link #GONE}.
-     * @see #setVisibility(int)
+     *
+     * This will trigger [BannerInterface.OnShowListener] callback if visibility set to
+     * [.VISIBLE] or [BannerInterface.OnDismissListener] callback if set to
+     * [.GONE].
+     *
+     *
+     *
+     * If visibility set to [.INVISIBLE] none of these callbacks will be triggered.
+     *
+     *
+     * @param visibility One of [.VISIBLE], [.INVISIBLE], or [.GONE].
+     * @see .setVisibility
      */
-    public void setBannerVisibility(@Visibility int visibility) {
+    fun setBannerVisibility(@Visibility visibility: Int) {
         if (visibility == VISIBLE) {
-            dispatchOnShow();
+            dispatchOnShow()
         } else if (visibility == GONE) {
-            dispatchOnDismiss();
+            dispatchOnDismiss()
         }
-        setVisibility(visibility);
+        setVisibility(visibility)
     }
 
     /**
-     * Shows the {@link Banner} with the animation.
-     * <p>
-     * Call {@link #setVisibility(int) Banner.setVisibility(VISIBLE)} to immediately show the
-     * banner without animation.
-     * </p>
+     * Shows the [Banner] with the animation after the specified delay in milliseconds.
      *
-     * @see #setBannerVisibility(int)
-     */
-    public void show() {
-        show(0);
-    }
-
-    /**
-     * Shows the {@link Banner} with the animation after the specified delay in milliseconds.
-     * <p>
      * Note that the delay should always be non-negative. Any negative delay will be clamped to 0
      * on N and above.
-     * </p>
-     * <p>
-     * Call {@link #setVisibility(int) Banner.setVisibility(VISIBLE)} to immediately show the
+     *
+     * Call [Banner.setVisibility(VISIBLE)][setVisibility] to immediately show the
      * banner without animation.
-     * </p>
      *
      * @param delay The amount of time, in milliseconds, to delay starting the banner animation
-     * @see #show()
-     * @see #setBannerVisibility(int)
+     *
+     * @see show
+     * @see setBannerVisibility
      */
-    public void show(long delay) {
+    @JvmOverloads
+    fun show(delay: Long = 0) {
         // Other variants return getMeasuredHeight lesser than actual height.
         // See https://stackoverflow.com/a/29684471/1216542
-
-        int widthSpec = MeasureSpec.makeMeasureSpec(((ViewGroup) getParent()).getWidth(),
-                MeasureSpec.EXACTLY);
-        int heightSpec = MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED);
-        measure(widthSpec, heightSpec);
-
-        final int fromY = -getMeasuredHeight();
-        final MarginLayoutParams layoutParams = (MarginLayoutParams) getLayoutParams();
-        mMarginBottom = layoutParams.bottomMargin;
+        val widthSpec = MeasureSpec.makeMeasureSpec(
+            (parent as ViewGroup).width,
+            MeasureSpec.EXACTLY
+        )
+        val heightSpec = MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED)
+        measure(widthSpec, heightSpec)
+        val fromY = -measuredHeight
+        val layoutParams = layoutParams as MarginLayoutParams
+        mMarginBottom = layoutParams.bottomMargin
 
         // Animate the banner
-        ObjectAnimator bannerAnimator = ObjectAnimator.ofFloat(this, View.TRANSLATION_Y, fromY, 0);
+        val bannerAnimator = ObjectAnimator.ofFloat(this, TRANSLATION_Y, fromY.toFloat(), 0f)
         // Animate the banner's bottom margin to move other views
-        layoutParams.bottomMargin = fromY;
-        ValueAnimator marginAnimator = ValueAnimator.ofInt(layoutParams.bottomMargin,
-                mMarginBottom);
-        marginAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                layoutParams.bottomMargin = (Integer) valueAnimator.getAnimatedValue();
-                requestLayout();
-            }
-        });
-
-        final AnimatorSet animatorSet = new AnimatorSet();
-        animatorSet.playTogether(bannerAnimator, marginAnimator);
-        animatorSet.setInterpolator(new AccelerateDecelerateInterpolator());
-        animatorSet.setStartDelay(delay);
-        animatorSet.setDuration(ANIM_DURATION_SHOW);
-        animatorSet.addListener(mAnimatorListener);
-        animatorSet.start();
+        layoutParams.bottomMargin = fromY
+        val marginAnimator = ValueAnimator.ofInt(
+            layoutParams.bottomMargin,
+            mMarginBottom
+        )
+        marginAnimator.addUpdateListener { valueAnimator ->
+            layoutParams.bottomMargin = (valueAnimator.animatedValue as Int)
+            requestLayout()
+        }
+        val animatorSet = AnimatorSet()
+        animatorSet.playTogether(bannerAnimator, marginAnimator)
+        animatorSet.interpolator = AccelerateDecelerateInterpolator()
+        animatorSet.startDelay = delay
+        animatorSet.duration = ANIM_DURATION_SHOW.toLong()
+        animatorSet.addListener(mAnimatorListener)
+        animatorSet.start()
     }
 
     /**
-     * Dismisses the {@link Banner} with the animation.
-     * <p>
-     * Call {@link #setVisibility(int) Banner.setVisibility(GONE)} to immediately dismiss the
-     * banner without animation.
-     * </p>
+     * Dismisses the [Banner] with the animation.
      *
-     * @see #setBannerVisibility(int)
+     *
+     * Call [Banner.setVisibility(GONE)][setVisibility] to immediately dismiss the
+     * banner without animation.
+     *
+     *
+     * @see [setBannerVisibility]
      */
-    @Override
-    public void dismiss() {
-        dismiss(0);
+    override fun dismiss() {
+        dismiss(0)
     }
 
     /**
-     * Dismisses the {@link Banner} with the animation after the specified delay in milliseconds.
-     * <p>
-     * Call {@link #setVisibility(int) Banner.setVisibility(GONE)} to immediately dismiss the
+     * Dismisses the [Banner] with the animation after the specified delay in milliseconds.
+     *
+     *
+     * Call [Banner.setVisibility(GONE)][setVisibility] to immediately dismiss the
      * banner without animation.
-     * </p>
+     *
      *
      * @param delay The amount of time, in milliseconds, to delay starting the banner animation
-     * @see #dismiss()
-     * @see #setBannerVisibility(int)
+     * @see dismiss
+     * @see setBannerVisibility
      */
-    @Override
-    public void dismiss(long delay) {
-        final int toY = -getMeasuredHeight();
-        final MarginLayoutParams layoutParams = (MarginLayoutParams) getLayoutParams();
-        mMarginBottom = layoutParams.bottomMargin;
+    override fun dismiss(delay: Long) {
+        val toY = -measuredHeight
+        val layoutParams = layoutParams as MarginLayoutParams
+        mMarginBottom = layoutParams.bottomMargin
 
         // Animate the banner
-        ObjectAnimator bannerAnimator = ObjectAnimator.ofFloat(this, View.TRANSLATION_Y, 0, toY);
+        val bannerAnimator = ObjectAnimator.ofFloat(this, TRANSLATION_Y, 0f, toY.toFloat())
         // Animate the banner's bottom margin to move other views
-        ValueAnimator marginAnimator = ValueAnimator.ofInt(layoutParams.bottomMargin, toY);
-        marginAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                layoutParams.bottomMargin = (Integer) valueAnimator.getAnimatedValue();
-                requestLayout();
-            }
-        });
-
-        final AnimatorSet animatorSet = new AnimatorSet();
-        animatorSet.playTogether(bannerAnimator, marginAnimator);
-        animatorSet.setInterpolator(new AccelerateDecelerateInterpolator());
-        animatorSet.setStartDelay(delay);
-        animatorSet.setDuration(ANIM_DURATION_DISMISS);
-        animatorSet.addListener(mAnimatorListener);
-        animatorSet.start();
+        val marginAnimator = ValueAnimator.ofInt(layoutParams.bottomMargin, toY)
+        marginAnimator.addUpdateListener { valueAnimator ->
+            layoutParams.bottomMargin = (valueAnimator.animatedValue as Int)
+            requestLayout()
+        }
+        val animatorSet = AnimatorSet()
+        animatorSet.playTogether(bannerAnimator, marginAnimator)
+        animatorSet.interpolator = AccelerateDecelerateInterpolator()
+        animatorSet.startDelay = delay
+        animatorSet.duration = ANIM_DURATION_DISMISS.toLong()
+        animatorSet.addListener(mAnimatorListener)
+        animatorSet.start()
     }
 
-    private final AnimatorListenerAdapter mAnimatorListener = new AnimatorListenerAdapter() {
-        @Override
-        public void onAnimationStart(final Animator animation) {
+    private val mAnimatorListener: AnimatorListenerAdapter = object : AnimatorListenerAdapter() {
+        override fun onAnimationStart(animation: Animator) {
             // onAnimationStart is invoked immediately after calling AnimatorSet.start()
-            postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    mIsAnimating = true;
-                    if (animation.getDuration() == ANIM_DURATION_SHOW) {
-                        setVisibility(VISIBLE);
-                    }
+            postDelayed({
+                mIsAnimating = true
+                if (animation.duration == ANIM_DURATION_SHOW.toLong()) {
+                    visibility = VISIBLE
                 }
-            }, animation.getStartDelay());
+            }, animation.startDelay)
         }
 
-        @Override
-        public void onAnimationEnd(Animator animation) {
-            mIsAnimating = false;
-            if (animation.getDuration() == ANIM_DURATION_DISMISS) {
-                setVisibility(GONE);
+        override fun onAnimationEnd(animation: Animator) {
+            mIsAnimating = false
+            if (animation.duration == ANIM_DURATION_DISMISS.toLong()) {
+                visibility = GONE
 
                 // Reset to default
-                MarginLayoutParams layoutParams = (MarginLayoutParams) getLayoutParams();
-                layoutParams.bottomMargin = mMarginBottom;
-                setLayoutParams(layoutParams);
+                val layoutParams = layoutParams as MarginLayoutParams
+                layoutParams.bottomMargin = mMarginBottom
+                setLayoutParams(layoutParams)
                 // #7 Fix dismiss animation
                 //setTranslationY(0);
             }
-
-            if (isShown()) {
-                dispatchOnShow();
+            if (isShown) {
+                dispatchOnShow()
             } else {
-                dispatchOnDismiss();
+                dispatchOnDismiss()
             }
-        }
-    };
-
-    private void dispatchOnShow() {
-        if (mOnShowListener != null) {
-            mOnShowListener.onShow();
         }
     }
 
-    private void dispatchOnDismiss() {
+    init {
+        loadDimens(context)
+        initViewGroup(context)
+        retrieveAttrs(context, attrs, defStyleAttr)
+    }
+
+    private fun dispatchOnShow() {
+        if (mOnShowListener != null) {
+            mOnShowListener!!.onShow()
+        }
+    }
+
+    private fun dispatchOnDismiss() {
         if (mOnDismissListener != null) {
-            mOnDismissListener.onDismiss();
+            mOnDismissListener!!.onDismiss()
         }
     }
 
@@ -1106,30 +1019,33 @@ public class Banner extends ViewGroup implements BannerInterface {
      *
      * @return the total horizontal padding in pixels
      */
-    private int getContainerHorizontalPadding() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            return mContentContainer.getPaddingStart() + mContentContainer.getPaddingEnd();
+    private val containerHorizontalPadding: Int
+        get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            mContentContainer.paddingStart + mContentContainer.paddingEnd
         } else {
-            return mContentContainer.getPaddingLeft() + mContentContainer.getPaddingRight();
+            mContentContainer.paddingLeft + mContentContainer.paddingRight
         }
-    }
 
     /**
      * Sets the padding to the container view.
-     * <p>
-     * Use {@code -1} to preserve the existing padding.
-     * </p>
+     *
+     *
+     * Use `-1` to preserve the existing padding.
+     *
      */
-    private void setContainerPadding(int start, int top, int end) {
+    private fun setContainerPadding(start: Int, top: Int, end: Int) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
             mContentContainer.setPaddingRelative(
-                    start != -1 ? start : mContentContainer.getPaddingStart(),
-                    top != -1 ? top : mContentContainer.getPaddingTop(),
-                    end != -1 ? end : mContentContainer.getPaddingEnd(), 0);
+                if (start != -1) start else mContentContainer.paddingStart,
+                if (top != -1) top else mContentContainer.paddingTop,
+                if (end != -1) end else mContentContainer.paddingEnd, 0
+            )
         } else {
-            mContentContainer.setPadding(start != -1 ? start : mContentContainer.getPaddingLeft(),
-                    top != -1 ? top : mContentContainer.getPaddingTop(),
-                    end != -1 ? end : mContentContainer.getPaddingRight(), 0);
+            mContentContainer.setPadding(
+                if (start != -1) start else mContentContainer.paddingLeft,
+                if (top != -1) top else mContentContainer.paddingTop,
+                if (end != -1) end else mContentContainer.paddingRight, 0
+            )
         }
     }
 
@@ -1139,95 +1055,82 @@ public class Banner extends ViewGroup implements BannerInterface {
      * @param dimenRes the dimension resource identifier
      * @return Resource dimension value multiplied by the appropriate metric and truncated to
      * integer pixels.
-     * @see android.content.res.Resources#getDimensionPixelSize(int)
+     * @see android.content.res.Resources.getDimensionPixelSize
      */
-    private int getDimen(@DimenRes int dimenRes) {
-        return getContext().getResources().getDimensionPixelSize(dimenRes);
+    private fun getDimen(@DimenRes dimenRes: Int): Int {
+        return context.resources.getDimensionPixelSize(dimenRes)
     }
 
-    @Nullable
-    @Override
-    protected Parcelable onSaveInstanceState() {
-        Parcelable superState = super.onSaveInstanceState();
-        SavedState ss = new SavedState(superState);
-        ss.visibility = getVisibility();
-        return ss;
+    override fun onSaveInstanceState(): Parcelable? {
+        val superState = super.onSaveInstanceState()
+        val ss = SavedState(superState)
+        ss.visibility = visibility
+        return ss
     }
 
-    @Override
-    protected void onRestoreInstanceState(Parcelable state) {
-        if (!(state instanceof SavedState)) {
-            super.onRestoreInstanceState(state);
-            return;
+    override fun onRestoreInstanceState(state: Parcelable) {
+        if (state !is SavedState) {
+            super.onRestoreInstanceState(state)
+            return
         }
-        SavedState ss = (SavedState) state;
-        super.onRestoreInstanceState(ss.getSuperState());
+        super.onRestoreInstanceState(state.superState)
         // Restore visibility
-        setVisibility(ss.visibility);
+        visibility = state.visibility
     }
 
-    private static class SavedState extends BaseSavedState {
-        int visibility;
+    private class SavedState : BaseSavedState {
+        var visibility = 0
 
-        SavedState(Parcelable superState) {
-            super(superState);
+        internal constructor(superState: Parcelable?) : super(superState) {}
+        private constructor(`in`: Parcel) : super(`in`) {
+            visibility = `in`.readInt()
         }
 
-        private SavedState(Parcel in) {
-            super(in);
-            visibility = in.readInt();
+        override fun writeToParcel(out: Parcel, flags: Int) {
+            super.writeToParcel(out, flags)
+            out.writeInt(visibility)
         }
 
-        @Override
-        public void writeToParcel(Parcel out, int flags) {
-            super.writeToParcel(out, flags);
-            out.writeInt(visibility);
-        }
+        companion object {
+            @JvmField
+            val CREATOR: Creator<SavedState?> = object : Creator<SavedState?> {
+                override fun createFromParcel(`in`: Parcel): SavedState? {
+                    return SavedState(`in`)
+                }
 
-        public static final Parcelable.Creator<SavedState> CREATOR =
-                new Parcelable.Creator<SavedState>() {
-            public SavedState createFromParcel(Parcel in) {
-                return new SavedState(in);
+                override fun newArray(size: Int): Array<SavedState?> {
+                    return arrayOfNulls(size)
+                }
             }
-
-            public SavedState[] newArray(int size) {
-                return new SavedState[size];
-            }
-        };
+        }
     }
 
-    public static class Builder {
-        private final Context mContext;
-
-        private ViewGroup mParent;
-        private int mChildIndex;
-        private ViewGroup.LayoutParams mParams;
+    /**
+     * Creates a builder for a banner that uses the default banner style (either specified in
+     * the app theme or in this library).
+     *
+     *
+     * The default banner style is defined by [R.attr#bannerStyle][R.attr.bannerStyle]
+     * within the parent `context`'s theme.
+     *
+     *
+     * @param mContext the parent context
+     */
+    class Builder(private val mContext: Context) {
+        private var mParent: ViewGroup? = null
+        private var mChildIndex = 0
+        private var mParams: LayoutParams? = null
 
         @IdRes
-        private int mId;
-        private Drawable mIcon;
-        private CharSequence mMessageText;
-        private String mLeftBtnText;
-        private String mRightBtnText;
-
-        private BannerInterface.OnClickListener mLeftBtnListener;
-        private BannerInterface.OnClickListener mRightBtnListener;
-        private BannerInterface.OnDismissListener mOnDismissListener;
-        private BannerInterface.OnShowListener mOnShowListener;
-
-        /**
-         * Creates a builder for a banner that uses the default banner style (either specified in
-         * the app theme or in this library).
-         * <p>
-         * The default banner style is defined by {@link R.attr#bannerStyle R.attr#bannerStyle}
-         * within the parent {@code context}'s theme.
-         * </p>
-         *
-         * @param context the parent context
-         */
-        public Builder(@NonNull Context context) {
-            mContext = context;
-        }
+        private var mId = 0
+        private var mIcon: Drawable? = null
+        private var mMessageText: CharSequence? = null
+        private var mLeftBtnText: String? = null
+        private var mRightBtnText: String? = null
+        private var mLeftBtnListener: BannerInterface.OnClickListener? = null
+        private var mRightBtnListener: BannerInterface.OnClickListener? = null
+        private var mOnDismissListener: BannerInterface.OnDismissListener? = null
+        private var mOnShowListener: BannerInterface.OnShowListener? = null
 
         /**
          * Creates a builder for a banner that uses an explicit style resource.
@@ -1235,248 +1138,276 @@ public class Banner extends ViewGroup implements BannerInterface {
          * @param context    the parent context
          * @param themeResId the resource ID of the theme against which to inflate this banner
          */
-        public Builder(@NonNull Context context, @StyleRes int themeResId) {
-            this(new ContextThemeWrapper(context, themeResId));
+        constructor(context: Context, @StyleRes themeResId: Int) : this(
+            ContextThemeWrapper(
+                context,
+                themeResId
+            )
+        ) {
         }
 
         /**
-         * Sets the {@link ViewGroup} that will be a parent view for this banner.
-         * <p>
-         * <strong>Note:</strong> the banner will be added as a first child to this view. To
-         * specify an index use {@link #setParent(ViewGroup, int)}.
-         * </p>
+         * Sets the [ViewGroup] that will be a parent view for this banner.
+         *
+         *
+         * **Note:** the banner will be added as a first child to this view. To
+         * specify an index use [.setParent].
+         *
          *
          * @param parent the parent view to display the banner in
-         * @return the {@link Builder} object to chain calls
-         * @see #setParent(ViewGroup, int)
-         * @see #setParent(ViewGroup, int, ViewGroup.LayoutParams)
+         * @return the [Builder] object to chain calls
+         * @see .setParent
+         * @see .setParent
          */
-        public Builder setParent(@NonNull ViewGroup parent) {
-            setParent(parent, 0);
-            return this;
+        fun setParent(parent: ViewGroup): Builder {
+            setParent(parent, 0)
+            return this
         }
 
         /**
-         * Sets the {@link ViewGroup} that will be a parent view for this banner and specify
+         * Sets the [ViewGroup] that will be a parent view for this banner and specify
          * banner's index in the parent view.
          *
          * @param parent the parent view to display the banner in
          * @param index  the position at which to add the banner or -1 to add last
-         * @return the {@link Builder} object to chain calls
-         * @see #setParent(ViewGroup)
-         * @see #setParent(ViewGroup, int, ViewGroup.LayoutParams)
+         * @return the [Builder] object to chain calls
+         * @see .setParent
+         * @see .setParent
          */
-        public Builder setParent(@NonNull ViewGroup parent, int index) {
-            setParent(parent, index, new ViewGroup.LayoutParams(MATCH_PARENT, WRAP_CONTENT));
-            return this;
+        fun setParent(parent: ViewGroup, index: Int): Builder {
+            setParent(
+                parent,
+                index,
+                LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
+            )
+            return this
         }
 
         /**
-         * Sets the {@link ViewGroup} that will be a parent view for this banner and specify
+         * Sets the [ViewGroup] that will be a parent view for this banner and specify
          * banner's index in the parent view.
          *
          * @param parent the parent view to display the banner in
          * @param index  the position at which to add the banner or -1 to add last
          * @param params the layout parameters to set on the banner
-         * @return the {@link Builder} object to chain calls
-         * @see #setParent(ViewGroup)
-         * @see #setParent(ViewGroup, int)
+         * @return the [Builder] object to chain calls
+         * @see .setParent
+         * @see .setParent
          */
-        public Builder setParent(@NonNull ViewGroup parent, int index,
-                                 ViewGroup.LayoutParams params) {
-            mParent = parent;
-            mChildIndex = index;
-            mParams = params;
-            return this;
+        fun setParent(parent: ViewGroup, index: Int, params: LayoutParams?): Builder {
+            mParent = parent
+            mChildIndex = index
+            mParams = params
+            return this
         }
 
         /**
          * Sets the identifier for this banner. The identifier should be a positive number.
          *
          * @param id A number used to identify the banner
-         * @return the {@link Builder} object to chain calls
+         * @return the [Builder] object to chain calls
          */
-        public Builder setId(@IdRes int id) {
-            mId = id;
-            return this;
+        fun setId(@IdRes id: Int): Builder {
+            mId = id
+            return this
         }
 
         /**
-         * Sets the {@link Drawable} to be used in the banner.
+         * Sets the [Drawable] to be used in the banner.
          *
-         * @return the {@link Builder} object to chain calls
+         * @return the [Builder] object to chain calls
          */
-        public Builder setIcon(@DrawableRes int iconId) {
-            mIcon = ContextCompat.getDrawable(mContext, iconId);
-            return this;
+        fun setIcon(@DrawableRes iconId: Int): Builder {
+            mIcon = ContextCompat.getDrawable(mContext, iconId)
+            return this
         }
 
         /**
-         * Sets the resource id of the {@link Drawable} to be used in the banner.
+         * Sets the resource id of the [Drawable] to be used in the banner.
          *
-         * @return the {@link Builder} object to chain calls
+         * @return the [Builder] object to chain calls
          */
-        public Builder setIcon(@Nullable Drawable icon) {
-            mIcon = icon;
-            return this;
+        fun setIcon(icon: Drawable?): Builder {
+            mIcon = icon
+            return this
         }
 
         /**
          * Sets the message to display in the banner using the given resource id.
          *
-         * @return the {@link Builder} object to chain calls
+         * @return the [Builder] object to chain calls
          */
-        public Builder setMessage(@StringRes int textId) {
-            mMessageText = mContext.getString(textId);
-            return this;
+        fun setMessage(@StringRes textId: Int): Builder {
+            mMessageText = mContext.getString(textId)
+            return this
         }
 
         /**
          * Sets the message to display in the banner.
          *
-         * @return the {@link Builder} object to chain calls
+         * @return the [Builder] object to chain calls
          */
-        public Builder setMessage(@NonNull CharSequence text) {
-            mMessageText = text;
-            return this;
+        fun setMessage(text: CharSequence): Builder {
+            mMessageText = text
+            return this
         }
 
         /**
          * Sets a listener to be invoked when the left button of the banner is pressed.
-         * <p>
+         *
          * Usually used for the dismissive action.
-         * </p>
          *
          * @param textId   The resource id of the text to display in the left button
-         * @param listener The {@link BannerInterface.OnClickListener} to use
-         * @return the {@link Builder} object to chain calls
+         * @param listener The [BannerInterface.OnClickListener] to use
+         * @return the [Builder] object to chain calls
          */
-        public Builder setLeftButton(@StringRes int textId,
-                                     @Nullable BannerInterface.OnClickListener listener) {
-            setLeftButton(mContext.getString(textId), listener);
-            return this;
+        fun setLeftButton(
+            @StringRes textId: Int,
+            listener: BannerInterface.OnClickListener?
+        ): Builder {
+            setLeftButton(mContext.getString(textId), listener)
+            return this
         }
 
         /**
          * Sets a listener to be invoked when the left button of the banner is pressed.
-         * <p>
+         *
+         *
          * Usually used for the dismissive action.
-         * </p>
+         *
          *
          * @param text     The text to display in the left button
-         * @param listener The {@link BannerInterface.OnClickListener} to use
-         * @return the {@link Builder} object to chain calls
+         * @param listener The [BannerInterface.OnClickListener] to use
+         * @return the [Builder] object to chain calls
          */
-        public Builder setLeftButton(@NonNull String text,
-                                     @Nullable BannerInterface.OnClickListener listener) {
-            mLeftBtnText = text;
-            mLeftBtnListener = listener;
-            return this;
+        fun setLeftButton(
+            text: String,
+            listener: BannerInterface.OnClickListener?
+        ): Builder {
+            mLeftBtnText = text
+            mLeftBtnListener = listener
+            return this
         }
 
         /**
          * Sets a listener to be invoked when the right button of the banner is pressed.
-         * <p>
+         *
+         *
          * Usually used for the confirming action.
-         * </p>
+         *
          *
          * @param textId   The resource id of the text to display in the right button
-         * @param listener The {@link BannerInterface.OnClickListener} to use
-         * @return the {@link Builder} object to chain calls
+         * @param listener The [BannerInterface.OnClickListener] to use
+         * @return the [Builder] object to chain calls
          */
-        public Builder setRightButton(@StringRes int textId,
-                                      @Nullable BannerInterface.OnClickListener listener) {
-            setRightButton(mContext.getString(textId), listener);
-            return this;
+        fun setRightButton(
+            @StringRes textId: Int,
+            listener: BannerInterface.OnClickListener?
+        ): Builder {
+            setRightButton(mContext.getString(textId), listener)
+            return this
         }
 
         /**
          * Sets a listener to be invoked when the right button of the banner is pressed.
-         * <p>
+         *
+         *
          * Usually used for the confirming action.
-         * </p>
+         *
          *
          * @param text     The text to display in the right button
-         * @param listener The {@link BannerInterface.OnClickListener} to use
-         * @return the {@link Builder} object to chain calls
+         * @param listener The [BannerInterface.OnClickListener] to use
+         * @return the [Builder] object to chain calls
          */
-        public Builder setRightButton(@NonNull String text,
-                                      @Nullable BannerInterface.OnClickListener listener) {
-            mRightBtnText = text;
-            mRightBtnListener = listener;
-            return this;
+        fun setRightButton(
+            text: String,
+            listener: BannerInterface.OnClickListener?
+        ): Builder {
+            mRightBtnText = text
+            mRightBtnListener = listener
+            return this
         }
 
         /**
          * Sets a listener to be invoked when the banner is dismissed.
          *
-         * @param listener The {@link BannerInterface.OnDismissListener} to use
-         * @return the {@link Builder} object to chain calls
+         * @param listener The [BannerInterface.OnDismissListener] to use
+         * @return the [Builder] object to chain calls
          */
-        public Builder setOnDismissListener(@Nullable BannerInterface.OnDismissListener listener) {
-            mOnDismissListener = listener;
-            return this;
+        fun setOnDismissListener(listener: BannerInterface.OnDismissListener?): Builder {
+            mOnDismissListener = listener
+            return this
         }
 
         /**
          * Sets a listener to be invoked when the banner is shown.
          *
-         * @param listener The {@link BannerInterface.OnShowListener} to use
-         * @return the {@link Builder} object to chain calls
+         * @param listener The [BannerInterface.OnShowListener] to use
+         * @return the [Builder] object to chain calls
          */
-        public Builder setOnShowListener(@Nullable BannerInterface.OnShowListener listener) {
-            mOnShowListener = listener;
-            return this;
+        fun setOnShowListener(listener: BannerInterface.OnShowListener?): Builder {
+            mOnShowListener = listener
+            return this
         }
 
         /**
-         * Creates a {@link Banner} with the arguments supplied to this builder.
-         * <p>
+         * Creates a [Banner] with the arguments supplied to this builder.
+         *
+         *
          * Calling this method does not display the banner. If no additional processing is
-         * needed, {@link #show()} may be called instead to both create and display the banner.
-         * </p>
+         * needed, [.show] may be called instead to both create and display the banner.
+         *
          *
          * @return The banner created using the arguments supplied to this builder
          */
-        @NonNull
-        public Banner create() {
+        fun create(): Banner {
             if (mParent == null) {
-                throw new NullPointerException("The parent view must not be null! "
-                        + "Call Banner.Builder#setParent() to set the parent view.");
+                throw NullPointerException(
+                    "The parent view must not be null! "
+                            + "Call Banner.Builder#setParent() to set the parent view."
+                )
             }
-
-            final Banner banner = new Banner(mContext);
-            banner.setId(mId != 0 ? mId : R.id.mb_banner);
-            banner.setIcon(mIcon);
-            banner.setMessage(mMessageText);
-            banner.setLeftButton(mLeftBtnText, mLeftBtnListener);
-            banner.setRightButton(mRightBtnText, mRightBtnListener);
-            banner.setOnDismissListener(mOnDismissListener);
-            banner.setOnShowListener(mOnShowListener);
-            banner.setLayoutParams(mParams);
-            banner.setVisibility(GONE);
-
-            mParent.addView(banner, mChildIndex);
-
-            return banner;
+            val banner = Banner(mContext)
+            banner.id = if (mId != 0) mId else R.id.mb_banner
+            banner.setIcon(mIcon)
+            banner.setMessage(mMessageText)
+            banner.setLeftButton(mLeftBtnText, mLeftBtnListener)
+            banner.setRightButton(mRightBtnText, mRightBtnListener)
+            banner.setOnDismissListener(mOnDismissListener)
+            banner.setOnShowListener(mOnShowListener)
+            banner.layoutParams = mParams
+            banner.visibility = GONE
+            mParent!!.addView(banner, mChildIndex)
+            return banner
         }
 
         /**
-         * Creates a {@link Banner} with the arguments supplied to this builder and immediately
+         * Creates a [Banner] with the arguments supplied to this builder and immediately
          * displays the banner.
-         * <p>
+         *
+         *
          * Calling this method is functionally identical to:
          * <pre>
          * Banner banner = builder.create();
          * banner.show();</pre>
-         * </p>
+         *
          *
          * @return The banner created using the arguments supplied to this builder
          */
-        public Banner show() {
-            final Banner banner = create();
-            banner.show();
-            return banner;
+        fun show(): Banner {
+            val banner = create()
+            banner.show()
+            return banner
         }
+    }
+
+    companion object {
+        private const val TAG = "Banner"
+        private const val DEBUG = false
+        private const val LAYOUT_UNDEFINED = -1
+        private const val LAYOUT_SINGLE_LINE = 0
+        private const val LAYOUT_MULTILINE = 1
+        private const val ANIM_DURATION_DISMISS = 160
+        private const val ANIM_DURATION_SHOW = 180
     }
 }

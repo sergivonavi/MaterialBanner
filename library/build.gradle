@@ -1,4 +1,7 @@
-apply plugin: 'com.android.library'
+plugins {
+    id("com.android.library")
+    id("org.jetbrains.kotlin.android")
+}
 
 def versionNameSuffix = "-debug"
 
@@ -10,25 +13,27 @@ android {
         minSdk setup.minSdk
         targetSdk setup.targetSdk
 
-        resValue "string", "materialbanner_lib_version", "${project.release.versionName}${versionNameSuffix}"
+        resValue("string", "materialbanner_lib_version", "${project.release.versionName}${versionNameSuffix}")
     }
     buildTypes {
         release {
-            minifyEnabled false
-            consumerProguardFiles 'proguard-rules.pro'
+            minifyEnabled = false
+            consumerProguardFiles("proguard-rules.pro")
 
-            resValue "string", "materialbanner_lib_version", "${project.release.versionName}"
+            resValue("string", "materialbanner_lib_version", "${project.release.versionName}")
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
     }
 }
 
 dependencies {
-    implementation "androidx.core:core:${versions.androidX_core}"
-    implementation "com.google.android.material:material:${versions.material}"
+    //noinspection GradleDependency
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}")
+    implementation("androidx.core:core:${versions.androidX_core}")
+    implementation("com.google.android.material:material:${versions.material}")
 }
 
 // ignore for now
