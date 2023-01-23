@@ -77,7 +77,7 @@ public class ButtonsContainer extends ViewGroup {
         }
         layoutParams.bottomMargin = mButtonMarginBottom;
 
-        mLeftButton = new MaterialButton(context, null, R.attr.borderlessButtonStyle);
+        mLeftButton = new MaterialButton(context, null, androidx.appcompat.R.attr.borderlessButtonStyle);
         mLeftButton.setId(R.id.mb_button_left);
         mLeftButton.setSingleLine(true);
         mLeftButton.setMaxLines(1);
@@ -86,7 +86,7 @@ public class ButtonsContainer extends ViewGroup {
         mLeftButton.setLayoutParams(layoutParams);
         mLeftButton.setVisibility(GONE);
 
-        mRightButton = new MaterialButton(context, null, R.attr.borderlessButtonStyle);
+        mRightButton = new MaterialButton(context, null, androidx.appcompat.R.attr.borderlessButtonStyle);
         mRightButton.setId(R.id.mb_button_right);
         mRightButton.setSingleLine(true);
         mRightButton.setMaxLines(1);
