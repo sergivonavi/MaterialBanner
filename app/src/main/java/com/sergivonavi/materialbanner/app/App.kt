@@ -1,12 +1,10 @@
-package com.sergivonavi.materialbanner.app;
+package com.sergivonavi.materialbanner.app
 
-import android.app.Application;
+import android.app.Application
+import androidx.appcompat.app.AppCompatDelegate
 
-import androidx.appcompat.app.AppCompatDelegate;
-
-public class App extends Application {
-
-    static {
-        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+class App : Application() {
+    init {
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
     }
 }

@@ -1,28 +1,31 @@
-package com.sergivonavi.materialbanner.app;
+package com.sergivonavi.materialbanner.app
 
-import android.os.Bundle;
-import android.text.Html;
-import android.widget.TextView;
+import android.os.Bundle
+import android.text.Html
+import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.text.HtmlCompat
 
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
+class AboutActivity : AppCompatActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_about)
 
-public class AboutActivity extends AppCompatActivity {
-
-    @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_about);
-
-        TextView description = findViewById(R.id.description);
-        description.setText(Html.fromHtml(getString(
-                com.sergivonavi.materialbanner.R.string.library_MaterialBanner_libraryDescription)));
-        TextView appVersion = findViewById(R.id.version_app);
-        appVersion.setText(String.format(getString(R.string.about_app_version),
-                getString(R.string.materialbanner_app_version)));
-        TextView libVersion = findViewById(R.id.version_lib);
-        libVersion.setText(String.format(getString(R.string.about_lib_version),
-                getString(com.sergivonavi.materialbanner.R.string.materialbanner_lib_version)));
+        val description = findViewById<TextView>(R.id.description)
+        description.text =
+            HtmlCompat.fromHtml(
+                getString(com.sergivonavi.materialbanner.R.string.library_MaterialBanner_libraryDescription),
+                HtmlCompat.FROM_HTML_MODE_LEGACY
+            )
+        val appVersion = findViewById<TextView>(R.id.version_app)
+        appVersion.text = String.format(
+            getString(R.string.about_app_version),
+            getString(R.string.materialbanner_app_version)
+        )
+        val libVersion = findViewById<TextView>(R.id.version_lib)
+        libVersion.text = String.format(
+            getString(R.string.about_lib_version),
+            getString(com.sergivonavi.materialbanner.R.string.materialbanner_lib_version)
+        )
     }
-
 }

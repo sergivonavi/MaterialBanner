@@ -1,20 +1,15 @@
-package com.sergivonavi.materialbanner.app.activities.adapter;
+package com.sergivonavi.materialbanner.app.activities.adapter
 
-import android.view.View;
-import android.widget.ImageView;
+import android.view.View
+import android.widget.ImageView
+import androidx.recyclerview.widget.RecyclerView
+import com.sergivonavi.materialbanner.app.R
 
-import com.sergivonavi.materialbanner.app.R;
+internal class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    @JvmField
+    var image: ImageView
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-
-class ItemViewHolder extends RecyclerView.ViewHolder {
-
-    ImageView image;
-
-    ItemViewHolder(@NonNull View itemView) {
-        super(itemView);
-        image = itemView.findViewById(R.id.item_image);
+    init {
+        image = itemView.findViewById(R.id.item_image)
     }
-
 }

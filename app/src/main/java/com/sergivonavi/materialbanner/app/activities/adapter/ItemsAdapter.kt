@@ -1,59 +1,45 @@
-package com.sergivonavi.materialbanner.app.activities.adapter;
+package com.sergivonavi.materialbanner.app.activities.adapter
 
-import android.content.Context;
-import android.view.LayoutInflater;
-import android.view.ViewGroup;
+import android.content.Context
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
+import com.sergivonavi.materialbanner.app.R
+import com.squareup.picasso.Picasso
+import java.util.*
 
-import com.sergivonavi.materialbanner.app.R;
-import com.squareup.picasso.Picasso;
+internal class ItemsAdapter(context: Context?) : RecyclerView.Adapter<ItemViewHolder>() {
+    private val mLayoutInflater: LayoutInflater
+    private val mList: MutableList<String?> = ArrayList()
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-
-public class ItemsAdapter extends RecyclerView.Adapter<ItemViewHolder> {
-
-    private LayoutInflater mLayoutInflater;
-    private final List<String> mList = new ArrayList<>();
-
-    public ItemsAdapter(Context context) {
-        mLayoutInflater = LayoutInflater.from(context);
+    init {
+        mLayoutInflater = LayoutInflater.from(context)
 
         // Ensure we get a different ordering of images on each run.
-        Collections.addAll(mList, SampleData.ASSETS);
-        Collections.shuffle(mList);
+        Collections.addAll(mList, *SampleData.ASSETS)
+        mList.shuffle()
 
         // Triple up the list.
-        ArrayList<String> copy = new ArrayList<>(mList);
-        mList.addAll(copy);
-        mList.addAll(copy);
+        val copy = ArrayList(mList)
+        mList.addAll(copy)
+        mList.addAll(copy)
     }
 
-    @NonNull
-    @Override
-    public ItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new ItemViewHolder(mLayoutInflater.inflate(R.layout.item_list, parent, false));
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
+        return ItemViewHolder(mLayoutInflater.inflate(R.layout.item_list, parent, false))
     }
 
-    @Override
-    public void onBindViewHolder(@NonNull final ItemViewHolder holder, final int position) {
-        holder.image.post(new Runnable() {
-            @Override
-            public void run() {
-                Picasso.get()
-                        .load(mList.get(position))
-                        .resize(holder.image.getWidth(), holder.image.getHeight())
-                        .centerCrop()
-                        .into(holder.image);
-            }
-        });
+    override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
+        holder.image.post {
+            Picasso.get()
+                .load(mList[position])
+                .resize(holder.image.width, holder.image.height)
+                .centerCrop()
+                .into(holder.image)
+        }
     }
 
-    @Override
-    public int getItemCount() {
-        return mList.size();
+    override fun getItemCount(): Int {
+        return mList.size
     }
 }

@@ -1,8 +1,12 @@
-apply plugin: 'com.android.application'
-apply from: '../_sign/signing.gradle'
+plugins {
+    id("com.android.application")
+    id("org.jetbrains.kotlin.android")
+}
+apply from: "../_sign/signing.gradle"
+//apply(from = "../_sign/signing.gradle.kts")
 
 android {
-    namespace 'com.sergivonavi.materialbanner.app'
+    namespace "com.sergivonavi.materialbanner.app"
     compileSdk setup.compileSdk
 
     defaultConfig {
@@ -18,25 +22,28 @@ android {
     buildTypes {
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
 
             signingConfig signingConfigs.release
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
     }
     lint {
-        abortOnError false
+        abortOnError = false
     }
 }
 
 dependencies {
-    implementation project(':library')
-    implementation 'androidx.appcompat:appcompat:1.6.0'
-    implementation 'androidx.cardview:cardview:1.0.0'
-    implementation 'androidx.recyclerview:recyclerview:1.2.1'
-    implementation "com.google.android.material:material:${versions.material}"
-    implementation 'com.squareup.picasso:picasso:2.71828'
+    implementation project(":library")
+    //noinspection GradleDependency
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}")
+    implementation("androidx.appcompat:appcompat:1.6.0")
+    implementation("androidx.cardview:cardview:1.0.0")
+    implementation("androidx.core:core-ktx:1.9.0")
+    implementation("androidx.recyclerview:recyclerview:1.2.1")
+    implementation("com.google.android.material:material:${versions.material}")
+    implementation("com.squareup.picasso:picasso:2.71828")
 }

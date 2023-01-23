@@ -1,80 +1,69 @@
-package com.sergivonavi.materialbanner.app;
+package com.sergivonavi.materialbanner.app
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
+import android.content.Intent
+import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import android.widget.Button
+import androidx.appcompat.app.AppCompatActivity
+import com.sergivonavi.materialbanner.app.activities.*
 
-import com.sergivonavi.materialbanner.app.activities.FromCodeActivity;
-import com.sergivonavi.materialbanner.app.activities.FromLayoutActivity;
-import com.sergivonavi.materialbanner.app.activities.GlobalStyleActivity;
-import com.sergivonavi.materialbanner.app.activities.ShowcaseActivity;
-import com.sergivonavi.materialbanner.app.activities.StyledBannerActivity;
-import com.sergivonavi.materialbanner.app.activities.WithPaddingActivity;
+class MainActivity : AppCompatActivity(), View.OnClickListener {
 
-import androidx.appcompat.app.AppCompatActivity;
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        Button btn1 = findViewById(R.id.btn_showcase);
-        Button btn2 = findViewById(R.id.btn_from_layout);
-        Button btn3 = findViewById(R.id.btn_from_activity);
-        Button btn4 = findViewById(R.id.btn_styled);
-        Button btn5 = findViewById(R.id.btn_global_style);
-        Button btn6 = findViewById(R.id.btn_with_padding);
-        btn1.setOnClickListener(this);
-        btn2.setOnClickListener(this);
-        btn3.setOnClickListener(this);
-        btn4.setOnClickListener(this);
-        btn5.setOnClickListener(this);
-        btn6.setOnClickListener(this);
+        val btn1 = findViewById<Button>(R.id.btn_showcase)
+        val btn2 = findViewById<Button>(R.id.btn_from_layout)
+        val btn3 = findViewById<Button>(R.id.btn_from_activity)
+        val btn4 = findViewById<Button>(R.id.btn_styled)
+        val btn5 = findViewById<Button>(R.id.btn_global_style)
+        val btn6 = findViewById<Button>(R.id.btn_with_padding)
+        btn1.setOnClickListener(this)
+        btn2.setOnClickListener(this)
+        btn3.setOnClickListener(this)
+        btn4.setOnClickListener(this)
+        btn5.setOnClickListener(this)
+        btn6.setOnClickListener(this)
     }
 
-    @Override
-    public void onClick(View v) {
-        Intent intent = new Intent();
-        switch (v.getId()) {
-            case R.id.btn_showcase:
-                intent.setClass(MainActivity.this, ShowcaseActivity.class);
-                break;
-            case R.id.btn_from_layout:
-                intent.setClass(MainActivity.this, FromLayoutActivity.class);
-                break;
-            case R.id.btn_from_activity:
-                intent.setClass(MainActivity.this, FromCodeActivity.class);
-                break;
-            case R.id.btn_styled:
-                intent.setClass(MainActivity.this, StyledBannerActivity.class);
-                break;
-            case R.id.btn_global_style:
-                intent.setClass(MainActivity.this, GlobalStyleActivity.class);
-                break;
-            case R.id.btn_with_padding:
-                intent.setClass(MainActivity.this, WithPaddingActivity.class);
-                break;
+    override fun onClick(v: View) {
+        val intent = Intent()
+        when (v.id) {
+            R.id.btn_showcase -> intent.setClass(this@MainActivity, ShowcaseActivity::class.java)
+            R.id.btn_from_layout -> intent.setClass(
+                this@MainActivity,
+                FromLayoutActivity::class.java
+            )
+            R.id.btn_from_activity -> intent.setClass(
+                this@MainActivity,
+                FromCodeActivity::class.java
+            )
+            R.id.btn_styled -> intent.setClass(this@MainActivity, StyledBannerActivity::class.java)
+            R.id.btn_global_style -> intent.setClass(
+                this@MainActivity,
+                GlobalStyleActivity::class.java
+            )
+            R.id.btn_with_padding -> intent.setClass(
+                this@MainActivity,
+                WithPaddingActivity::class.java
+            )
         }
-        startActivity(intent);
+        startActivity(intent)
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.main, menu)
+        return true
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.menu_about) {
-            startActivity(new Intent(MainActivity.this, AboutActivity.class));
-            return true;
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.menu_about) {
+            startActivity(Intent(this@MainActivity, AboutActivity::class.java))
+            return true
         }
-        return false;
+        return false
     }
 }
