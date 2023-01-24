@@ -3,7 +3,6 @@ package com.sergivonavi.materialbanner.app.activities
 import android.os.Bundle
 import android.view.ViewGroup
 import com.sergivonavi.materialbanner.Banner
-import com.sergivonavi.materialbanner.BannerInterface
 import com.sergivonavi.materialbanner.app.R
 import com.sergivonavi.materialbanner.app.utils.SnackbarHelper
 
@@ -21,29 +20,17 @@ class FromCodeActivity : BaseSampleActivity() {
         mBanner = Banner.Builder(this).setParent(rootView)
             .setIcon(R.drawable.ic_signal_wifi_off_40dp)
             .setMessage(R.string.banner_message)
-            .setLeftButton(R.string.banner_btn_left, object : BannerInterface.OnClickListener {
-                override fun onClick(banner: BannerInterface?) {
-                    SnackbarHelper.show(rootView, R.string.msg_banner_btnleft)
-                    banner?.dismiss()
-                }
-            })
-            .setRightButton(R.string.banner_btn_right, object : BannerInterface.OnClickListener {
-                override fun onClick(banner: BannerInterface?) {
-                    SnackbarHelper.show(rootView, R.string.msg_banner_btnright)
-                    // Dismiss with 0.5 sec delay
-                    banner?.dismiss(500)
-                }
-            })
-            .setOnShowListener(listener = object : BannerInterface.OnShowListener {
-                override fun onShow() {
-                    SnackbarHelper.show(rootView, R.string.msg_banner_onshow)
-                }
-            })
-            .setOnDismissListener(listener = object : BannerInterface.OnDismissListener {
-                override fun onDismiss() {
-                    SnackbarHelper.show(rootView, R.string.msg_banner_ondismiss)
-                }
-            })
+            .setLeftButton(R.string.banner_btn_left) { banner ->
+                SnackbarHelper.show(rootView, R.string.msg_banner_btnleft)
+                banner.dismiss()
+            }
+            .setRightButton(R.string.banner_btn_right) { banner ->
+                SnackbarHelper.show(rootView, R.string.msg_banner_btnright)
+                // Dismiss with 0.5 sec delay
+                banner.dismiss(500)
+            }
+            .setOnShowListener { SnackbarHelper.show(rootView, R.string.msg_banner_onshow) }
+            .setOnDismissListener { SnackbarHelper.show(rootView, R.string.msg_banner_ondismiss) }
             .create()
     }
 }

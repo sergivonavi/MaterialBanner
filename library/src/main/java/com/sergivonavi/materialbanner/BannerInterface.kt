@@ -16,36 +16,32 @@
 package com.sergivonavi.materialbanner
 
 interface BannerInterface {
-    /**
-     * Dismisses the banner.
-     */
-    fun dismiss()
 
     /**
-     * Dismisses the banner after the specified delay in milliseconds.
+     * Dismisses the banner after the specified delay in milliseconds (0 by default).
      *
      * @param delay The amount of time, in milliseconds, to delay starting the banner animation
      */
-    fun dismiss(delay: Long)
+    fun dismiss(delay: Long = 0)
 
     /**
      * Interface used to allow the creator of a banner to run some code when a button in the
      * banner is clicked.
      */
-    interface OnClickListener {
+    fun interface OnClickListener {
         /**
          * This method will be invoked when a button in the banner is clicked.
          *
          * @param banner the banner that received the click
          */
-        fun onClick(banner: BannerInterface?)
+        fun onClick(banner: BannerInterface)
     }
 
     /**
      * Interface used to allow the creator of a banner to run some code when the banner is
      * dismissed.
      */
-    interface OnDismissListener {
+    fun interface OnDismissListener {
         /**
          * This method will be invoked when the banner is dismissed.
          */
@@ -55,7 +51,7 @@ interface BannerInterface {
     /**
      * Interface used to allow the creator of a banner to run some code when the banner is shown.
      */
-    interface OnShowListener {
+    fun interface OnShowListener {
         /**
          * This method will be invoked when the banner is shown.
          */

@@ -25,6 +25,7 @@ import androidx.annotation.RestrictTo
 import androidx.core.view.ViewCompat
 import com.google.android.material.button.MaterialButton
 import com.sergivonavi.materialbanner.R
+import kotlin.math.max
 
 @RestrictTo(RestrictTo.Scope.LIBRARY)
 class ButtonsContainer @JvmOverloads constructor(
@@ -115,7 +116,7 @@ class ButtonsContainer @JvmOverloads constructor(
             heightUsed += leftButton.measuredHeight + mButtonMarginBottom
         }
         if (rightButton.visibility != GONE) {
-            widthUsed = Math.max(widthUsed, rightButton.measuredWidth + mButtonMarginEnd)
+            widthUsed = max(widthUsed, rightButton.measuredWidth + mButtonMarginEnd)
             heightUsed += rightButton.measuredHeight + mButtonMarginBottom
         }
         setMeasuredDimension(widthUsed, heightUsed)
@@ -133,10 +134,7 @@ class ButtonsContainer @JvmOverloads constructor(
         }
         if (rightButton.visibility != GONE) {
             widthUsed += rightButton.measuredWidth + mButtonMarginEnd
-            heightUsed = Math.max(
-                heightUsed,
-                rightButton.measuredHeight + mButtonMarginBottom
-            )
+            heightUsed = max(heightUsed, rightButton.measuredHeight + mButtonMarginBottom)
         }
         setMeasuredDimension(widthUsed, heightUsed)
     }
@@ -225,21 +223,15 @@ class ButtonsContainer @JvmOverloads constructor(
         }
         return -1
     }
+
+    /**
+     * And orientation of buttons: either [HORIZONTAL] or [VERTICAL].
+     *
+     * Default value is [HORIZONTAL].
+     */
     @get:OrientationMode
     var orientation: Int
-    // TODO: fix documentation. Separate kDoc for getters and setters is not supported!
-        /**
-         * Returns the current orientation.
-         *
-         * @return either [HORIZONTAL] or [VERTICAL]
-         */
         get() = mOrientation
-        /**
-         * Should the layout be a column or a row.
-         *
-         * @param orientation [HORIZONTAL] or [VERTICAL]. Default value is
-         * [HORIZONTAL].
-         */
         set(orientation) {
             if (mOrientation != orientation) {
                 mOrientation = orientation

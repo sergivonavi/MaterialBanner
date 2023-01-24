@@ -45,26 +45,20 @@ import com.sergivonavi.materialbanner.widget.MessageView
  * A banner displays an important, succinct message, and provides actions for users to address
  * (or dismiss the banner). It requires a user action to be dismissed.
  *
- *
  * Banners should be displayed at the top of the screen, below a top app bar. They are persistent
  * and nonmodal, allowing the user to either ignore them or interact with them at any time.
  *
- *
- *
- * Banners can contain up to two action buttons which are set via [.setLeftButton] and
- * [.setRightButton] methods.
- *
- *
+ * Banners can contain up to two action buttons which are set via [setLeftButton] and
+ * [setRightButton] methods.
  *
  * To be notified when a banner has been shown or dismissed, you can provide a
  * [BannerInterface.OnShowListener] and [BannerInterface.OnDismissListener] via
  * [setOnShowListener] and [setOnDismissListener].
  *
- * <h3>Design Guides</h3>
+ * **Design Guides**
  *
  * For the style and usage guidelines read the
  * [Banners - Material Design](https://material.io/design/components/banners.html).
- *
  */
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 class Banner @JvmOverloads constructor(
@@ -109,8 +103,8 @@ class Banner @JvmOverloads constructor(
     private var mWideLayout = false
 
     /**
-     * The layout type: [.LAYOUT_UNDEFINED] [.LAYOUT_SINGLE_LINE] or
-     * [.LAYOUT_MULTILINE].
+     * The layout type: [LAYOUT_UNDEFINED], [LAYOUT_SINGLE_LINE] or
+     * [LAYOUT_MULTILINE].
      */
     private var mLayoutType = LAYOUT_UNDEFINED
     private var mIsAnimating = false
@@ -118,6 +112,13 @@ class Banner @JvmOverloads constructor(
     private var mRightButtonListener: BannerInterface.OnClickListener? = null
     private var mOnDismissListener: BannerInterface.OnDismissListener? = null
     private var mOnShowListener: BannerInterface.OnShowListener? = null
+
+    init {
+        loadDimens(context)
+        initViewGroup(context)
+        retrieveAttrs(context, attrs, defStyleAttr)
+    }
+
     private fun loadDimens(context: Context) {
         mWideLayout = context.resources.getBoolean(R.bool.mb_wide_layout)
         mIconSize = getDimen(R.dimen.mb_icon_size)
@@ -482,13 +483,10 @@ class Banner @JvmOverloads constructor(
     /**
      * Sets a listener to be invoked when the left button of the banner is pressed.
      *
-     *
      * Usually used for the dismissive action.
-     *
      *
      * @param text     The text to display in the left button
      * @param listener The [BannerInterface.OnClickListener] to use
-     * @see .setLeftButton
      */
     fun setLeftButton(text: String?, listener: BannerInterface.OnClickListener?) {
         mLeftButtonText = text
@@ -504,49 +502,36 @@ class Banner @JvmOverloads constructor(
     /**
      * Sets a listener to be invoked when the left button of the banner is pressed.
      *
-     *
      * Usually used for the dismissive action.
-     *
      *
      * @param textId   The resource id of the text to display in the left button
      * @param listener The [BannerInterface.OnClickListener] to use
-     * @see .setLeftButton
      */
-    fun setLeftButton(
-        @StringRes textId: Int,
-        listener: BannerInterface.OnClickListener?
-    ) {
+    fun setLeftButton(@StringRes textId: Int, listener: BannerInterface.OnClickListener?) {
         setLeftButton(context.getString(textId), listener)
     }
 
     /**
      * Sets a listener to be invoked when the left button of the banner is pressed.
      *
-     *
      * Usually used for the dismissive action.
-     *
      *
      * @param listener The [BannerInterface.OnClickListener] to use
      */
     fun setLeftButtonListener(listener: BannerInterface.OnClickListener?) {
         mLeftButtonListener = listener
         mLeftButton.setOnClickListener {
-            if (mLeftButtonListener != null) {
-                mLeftButtonListener!!.onClick(this@Banner)
-            }
+            mLeftButtonListener?.onClick(this@Banner)
         }
     }
 
     /**
      * Sets a listener to be invoked when the right button of the banner is pressed.
      *
-     *
      * Usually used for the confirming action.
-     *
      *
      * @param text     The text to display in the right button
      * @param listener The [BannerInterface.OnClickListener] to use
-     * @see .setRightButton
      */
     fun setRightButton(text: String?, listener: BannerInterface.OnClickListener?) {
         mRightButtonText = text
@@ -562,36 +547,26 @@ class Banner @JvmOverloads constructor(
     /**
      * Sets a listener to be invoked when the right button of the banner is pressed.
      *
-     *
      * Usually used for the confirming action.
-     *
      *
      * @param textId   The resource id of the text to display in the right button
      * @param listener The [BannerInterface.OnClickListener] to use
-     * @see .setRightButton
      */
-    fun setRightButton(
-        @StringRes textId: Int,
-        listener: BannerInterface.OnClickListener?
-    ) {
+    fun setRightButton(@StringRes textId: Int, listener: BannerInterface.OnClickListener?) {
         setRightButton(context.getString(textId), listener)
     }
 
     /**
      * Sets a listener to be invoked when the right button of the banner is pressed.
      *
-     *
      * Usually used for the confirming action.
-     *
      *
      * @param listener The [BannerInterface.OnClickListener] to use
      */
     fun setRightButtonListener(listener: BannerInterface.OnClickListener?) {
         mRightButtonListener = listener
         mRightButton.setOnClickListener {
-            if (mRightButtonListener != null) {
-                mRightButtonListener!!.onClick(this@Banner)
-            }
+            mRightButtonListener?.onClick(this@Banner)
         }
     }
 
@@ -795,7 +770,7 @@ class Banner @JvmOverloads constructor(
      * Sets a content start padding.
      *
      * @param dimenId the resource id of the dimension
-     * @see .setContentPaddingStartPx
+     * @see setContentPaddingStartPx
      */
     fun setContentPaddingStart(@DimenRes dimenId: Int) {
         setContentPaddingStartPx(getDimen(dimenId))
@@ -805,7 +780,7 @@ class Banner @JvmOverloads constructor(
      * Sets a content start padding.
      *
      * @param dimenPx the padding in pixels
-     * @see .setContentPaddingStart
+     * @see setContentPaddingStart
      */
     fun setContentPaddingStartPx(@Dimension dimenPx: Int) {
         setContainerPadding(dimenPx, -1, -1)
@@ -815,7 +790,7 @@ class Banner @JvmOverloads constructor(
      * Sets a content end padding.
      *
      * @param dimenId the resource id of the dimension
-     * @see .setContentPaddingEndPx
+     * @see setContentPaddingEndPx
      */
     fun setContentPaddingEnd(@DimenRes dimenId: Int) {
         setContentPaddingEndPx(getDimen(dimenId))
@@ -825,20 +800,20 @@ class Banner @JvmOverloads constructor(
      * Sets a content end padding.
      *
      * @param dimenPx the padding in pixels
-     * @see .setContentPaddingEnd
+     * @see setContentPaddingEnd
      */
     fun setContentPaddingEndPx(@Dimension dimenPx: Int) {
         setContainerPadding(-1, -1, dimenPx)
     }
 
     /**
-     * {@inheritDoc}
+     * Set the visibility state of this view.
      *
      * **Note:** this will not trigger [BannerInterface.OnShowListener] and
      * [BannerInterface.OnDismissListener] callbacks. If you want them use
      * [setBannerVisibility] instead.
-     *
      */
+    @Suppress("RedundantOverride")
     override fun setVisibility(visibility: Int) {
         super.setVisibility(visibility)
     }
@@ -846,18 +821,14 @@ class Banner @JvmOverloads constructor(
     /**
      * Sets the visibility state of this banner.
      *
-     *
      * This will trigger [BannerInterface.OnShowListener] callback if visibility set to
-     * [.VISIBLE] or [BannerInterface.OnDismissListener] callback if set to
-     * [.GONE].
+     * [View.VISIBLE] or [BannerInterface.OnDismissListener] callback if set to
+     * [View.GONE].
      *
+     * If visibility set to [View.INVISIBLE] none of these callbacks will be triggered.
      *
-     *
-     * If visibility set to [.INVISIBLE] none of these callbacks will be triggered.
-     *
-     *
-     * @param visibility One of [.VISIBLE], [.INVISIBLE], or [.GONE].
-     * @see .setVisibility
+     * @param visibility One of [View.VISIBLE], [View.INVISIBLE], or [View.GONE].
+     * @see setVisibility
      */
     fun setBannerVisibility(@Visibility visibility: Int) {
         if (visibility == VISIBLE) {
@@ -879,7 +850,6 @@ class Banner @JvmOverloads constructor(
      *
      * @param delay The amount of time, in milliseconds, to delay starting the banner animation
      *
-     * @see show
      * @see setBannerVisibility
      */
     @JvmOverloads
@@ -918,29 +888,13 @@ class Banner @JvmOverloads constructor(
     }
 
     /**
-     * Dismisses the [Banner] with the animation.
-     *
-     *
-     * Call [Banner.setVisibility(GONE)][setVisibility] to immediately dismiss the
-     * banner without animation.
-     *
-     *
-     * @see [setBannerVisibility]
-     */
-    override fun dismiss() {
-        dismiss(0)
-    }
-
-    /**
      * Dismisses the [Banner] with the animation after the specified delay in milliseconds.
      *
-     *
      * Call [Banner.setVisibility(GONE)][setVisibility] to immediately dismiss the
      * banner without animation.
      *
-     *
      * @param delay The amount of time, in milliseconds, to delay starting the banner animation
-     * @see dismiss
+     *
      * @see setBannerVisibility
      */
     override fun dismiss(delay: Long) {
@@ -986,7 +940,7 @@ class Banner @JvmOverloads constructor(
                 layoutParams.bottomMargin = mMarginBottom
                 setLayoutParams(layoutParams)
                 // #7 Fix dismiss animation
-                //setTranslationY(0);
+                // setTranslationY(0);
             }
             if (isShown) {
                 dispatchOnShow()
@@ -996,22 +950,12 @@ class Banner @JvmOverloads constructor(
         }
     }
 
-    init {
-        loadDimens(context)
-        initViewGroup(context)
-        retrieveAttrs(context, attrs, defStyleAttr)
-    }
-
     private fun dispatchOnShow() {
-        if (mOnShowListener != null) {
-            mOnShowListener!!.onShow()
-        }
+        mOnShowListener?.onShow()
     }
 
     private fun dispatchOnDismiss() {
-        if (mOnDismissListener != null) {
-            mOnDismissListener!!.onDismiss()
-        }
+        mOnDismissListener?.onDismiss()
     }
 
     /**
@@ -1029,9 +973,7 @@ class Banner @JvmOverloads constructor(
     /**
      * Sets the padding to the container view.
      *
-     *
      * Use `-1` to preserve the existing padding.
-     *
      */
     private fun setContainerPadding(start: Int, top: Int, end: Int) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
@@ -1061,7 +1003,7 @@ class Banner @JvmOverloads constructor(
         return context.resources.getDimensionPixelSize(dimenRes)
     }
 
-    override fun onSaveInstanceState(): Parcelable? {
+    override fun onSaveInstanceState(): Parcelable {
         val superState = super.onSaveInstanceState()
         val ss = SavedState(superState)
         ss.visibility = visibility
@@ -1081,7 +1023,7 @@ class Banner @JvmOverloads constructor(
     private class SavedState : BaseSavedState {
         var visibility = 0
 
-        internal constructor(superState: Parcelable?) : super(superState) {}
+        constructor(superState: Parcelable?) : super(superState)
         private constructor(`in`: Parcel) : super(`in`) {
             visibility = `in`.readInt()
         }
@@ -1109,10 +1051,8 @@ class Banner @JvmOverloads constructor(
      * Creates a builder for a banner that uses the default banner style (either specified in
      * the app theme or in this library).
      *
-     *
      * The default banner style is defined by [R.attr#bannerStyle][R.attr.bannerStyle]
      * within the parent `context`'s theme.
-     *
      *
      * @param mContext the parent context
      */
@@ -1139,49 +1079,8 @@ class Banner @JvmOverloads constructor(
          * @param themeResId the resource ID of the theme against which to inflate this banner
          */
         constructor(context: Context, @StyleRes themeResId: Int) : this(
-            ContextThemeWrapper(
-                context,
-                themeResId
-            )
-        ) {
-        }
-
-        /**
-         * Sets the [ViewGroup] that will be a parent view for this banner.
-         *
-         *
-         * **Note:** the banner will be added as a first child to this view. To
-         * specify an index use [.setParent].
-         *
-         *
-         * @param parent the parent view to display the banner in
-         * @return the [Builder] object to chain calls
-         * @see .setParent
-         * @see .setParent
-         */
-        fun setParent(parent: ViewGroup): Builder {
-            setParent(parent, 0)
-            return this
-        }
-
-        /**
-         * Sets the [ViewGroup] that will be a parent view for this banner and specify
-         * banner's index in the parent view.
-         *
-         * @param parent the parent view to display the banner in
-         * @param index  the position at which to add the banner or -1 to add last
-         * @return the [Builder] object to chain calls
-         * @see .setParent
-         * @see .setParent
-         */
-        fun setParent(parent: ViewGroup, index: Int): Builder {
-            setParent(
-                parent,
-                index,
-                LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
-            )
-            return this
-        }
+            ContextThemeWrapper(context, themeResId)
+        )
 
         /**
          * Sets the [ViewGroup] that will be a parent view for this banner and specify
@@ -1191,10 +1090,16 @@ class Banner @JvmOverloads constructor(
          * @param index  the position at which to add the banner or -1 to add last
          * @param params the layout parameters to set on the banner
          * @return the [Builder] object to chain calls
-         * @see .setParent
-         * @see .setParent
          */
-        fun setParent(parent: ViewGroup, index: Int, params: LayoutParams?): Builder {
+        @JvmOverloads
+        fun setParent(
+            parent: ViewGroup,
+            index: Int = 0,
+            params: LayoutParams? = LayoutParams(
+                LayoutParams.MATCH_PARENT,
+                LayoutParams.WRAP_CONTENT
+            )
+        ): Builder {
             mParent = parent
             mChildIndex = index
             mParams = params
@@ -1202,9 +1107,8 @@ class Banner @JvmOverloads constructor(
         }
 
         /**
-         * Sets the identifier for this banner. The identifier should be a positive number.
+         * Sets the [identifier][id] for this banner. The identifier should be a positive number.
          *
-         * @param id A number used to identify the banner
          * @return the [Builder] object to chain calls
          */
         fun setId(@IdRes id: Int): Builder {
@@ -1272,9 +1176,7 @@ class Banner @JvmOverloads constructor(
         /**
          * Sets a listener to be invoked when the left button of the banner is pressed.
          *
-         *
          * Usually used for the dismissive action.
-         *
          *
          * @param text     The text to display in the left button
          * @param listener The [BannerInterface.OnClickListener] to use
@@ -1292,9 +1194,7 @@ class Banner @JvmOverloads constructor(
         /**
          * Sets a listener to be invoked when the right button of the banner is pressed.
          *
-         *
          * Usually used for the confirming action.
-         *
          *
          * @param textId   The resource id of the text to display in the right button
          * @param listener The [BannerInterface.OnClickListener] to use
@@ -1311,9 +1211,7 @@ class Banner @JvmOverloads constructor(
         /**
          * Sets a listener to be invoked when the right button of the banner is pressed.
          *
-         *
          * Usually used for the confirming action.
-         *
          *
          * @param text     The text to display in the right button
          * @param listener The [BannerInterface.OnClickListener] to use
@@ -1329,9 +1227,8 @@ class Banner @JvmOverloads constructor(
         }
 
         /**
-         * Sets a listener to be invoked when the banner is dismissed.
+         * Sets a [listener] to be invoked when the banner is dismissed.
          *
-         * @param listener The [BannerInterface.OnDismissListener] to use
          * @return the [Builder] object to chain calls
          */
         fun setOnDismissListener(listener: BannerInterface.OnDismissListener?): Builder {
@@ -1340,9 +1237,8 @@ class Banner @JvmOverloads constructor(
         }
 
         /**
-         * Sets a listener to be invoked when the banner is shown.
+         * Sets a [listener] to be invoked when the banner is shown.
          *
-         * @param listener The [BannerInterface.OnShowListener] to use
          * @return the [Builder] object to chain calls
          */
         fun setOnShowListener(listener: BannerInterface.OnShowListener?): Builder {
@@ -1353,10 +1249,8 @@ class Banner @JvmOverloads constructor(
         /**
          * Creates a [Banner] with the arguments supplied to this builder.
          *
-         *
          * Calling this method does not display the banner. If no additional processing is
-         * needed, [.show] may be called instead to both create and display the banner.
-         *
+         * needed, [show] may be called instead to both create and display the banner.
          *
          * @return The banner created using the arguments supplied to this builder
          */
@@ -1385,12 +1279,10 @@ class Banner @JvmOverloads constructor(
          * Creates a [Banner] with the arguments supplied to this builder and immediately
          * displays the banner.
          *
-         *
          * Calling this method is functionally identical to:
-         * <pre>
-         * Banner banner = builder.create();
-         * banner.show();</pre>
          *
+         *    banner: Banner = builder.create()
+         *    banner.show()
          *
          * @return The banner created using the arguments supplied to this builder
          */
