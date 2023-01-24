@@ -107,11 +107,14 @@ class Banner @JvmOverloads constructor(
      * [LAYOUT_MULTILINE].
      */
     private var mLayoutType = LAYOUT_UNDEFINED
-    private var mIsAnimating = false
     private var mLeftButtonListener: BannerInterface.OnClickListener? = null
     private var mRightButtonListener: BannerInterface.OnClickListener? = null
     private var mOnDismissListener: BannerInterface.OnDismissListener? = null
     private var mOnShowListener: BannerInterface.OnShowListener? = null
+
+    private var mIsAnimating = false
+    private var mScheduledShow = false
+    private var mScheduledDismiss = false
 
     init {
         loadDimens(context)
@@ -853,6 +856,9 @@ class Banner @JvmOverloads constructor(
      * @see setBannerVisibility
      */
     fun show(delay: Long = 0) {
+        if (mScheduledShow || (!mScheduledDismiss && mIsAnimating)) return
+        mScheduledShow = true
+
         // Other variants return getMeasuredHeight lesser than actual height.
         // See https://stackoverflow.com/a/29684471/1216542
         val widthSpec = MeasureSpec.makeMeasureSpec(
@@ -897,6 +903,9 @@ class Banner @JvmOverloads constructor(
      * @see setBannerVisibility
      */
     fun dismiss(delay: Long = 0) {
+        if (mScheduledDismiss || (!mScheduledShow && mIsAnimating)) return
+        mScheduledDismiss = true
+
         val toY = -measuredHeight
         val layoutParams = layoutParams as MarginLayoutParams
         mMarginBottom = layoutParams.bottomMargin
@@ -950,10 +959,12 @@ class Banner @JvmOverloads constructor(
     }
 
     private fun dispatchOnShow() {
+        mScheduledShow = false
         mOnShowListener?.onShow(this)
     }
 
     private fun dispatchOnDismiss() {
+        mScheduledDismiss = false
         mOnDismissListener?.onDismiss(this)
     }
 
