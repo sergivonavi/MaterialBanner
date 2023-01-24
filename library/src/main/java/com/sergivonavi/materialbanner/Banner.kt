@@ -852,7 +852,6 @@ class Banner @JvmOverloads constructor(
      *
      * @see setBannerVisibility
      */
-    @JvmOverloads
     fun show(delay: Long = 0) {
         // Other variants return getMeasuredHeight lesser than actual height.
         // See https://stackoverflow.com/a/29684471/1216542
@@ -897,7 +896,7 @@ class Banner @JvmOverloads constructor(
      *
      * @see setBannerVisibility
      */
-    override fun dismiss(delay: Long) {
+    fun dismiss(delay: Long = 0) {
         val toY = -measuredHeight
         val layoutParams = layoutParams as MarginLayoutParams
         mMarginBottom = layoutParams.bottomMargin
@@ -951,11 +950,11 @@ class Banner @JvmOverloads constructor(
     }
 
     private fun dispatchOnShow() {
-        mOnShowListener?.onShow()
+        mOnShowListener?.onShow(this)
     }
 
     private fun dispatchOnDismiss() {
-        mOnDismissListener?.onDismiss()
+        mOnDismissListener?.onDismiss(this)
     }
 
     /**

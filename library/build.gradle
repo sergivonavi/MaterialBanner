@@ -30,7 +30,6 @@ android {
 }
 
 dependencies {
-    //noinspection GradleDependency
     implementation("org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}")
     implementation("androidx.core:core:${versions.androidX_core}")
     implementation("com.google.android.material:material:${versions.material}")

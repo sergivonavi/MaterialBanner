@@ -29,8 +29,14 @@ class FromCodeActivity : BaseSampleActivity() {
                 // Dismiss with 0.5 sec delay
                 banner.dismiss(500)
             }
-            .setOnShowListener { SnackbarHelper.show(rootView, R.string.msg_banner_onshow) }
-            .setOnDismissListener { SnackbarHelper.show(rootView, R.string.msg_banner_ondismiss) }
+            .setOnShowListener { banner ->
+                SnackbarHelper.show(rootView, R.string.msg_banner_onshow)
+                // banner?.setMessage("New message in onShowListener")
+            }
+            .setOnDismissListener { banner ->
+                SnackbarHelper.show(rootView, R.string.msg_banner_ondismiss)
+                // banner?.setMessage("New message in onDismissListener")
+            }
             .create()
     }
 }
