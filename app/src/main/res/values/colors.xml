@@ -10,6 +10,8 @@
     <color name="custom_icon_tint">#303F9F</color>
     <color name="custom_message_text">#388E3C</color>
     <color name="custom_buttons_text">#7B1FA2</color>
+    <color name="custom_button_left_text">#FF5722</color>
+    <color name="custom_button_right_text">#AAAAAA</color>
     <color name="custom_line">#d32f2f</color>
 
     <color name="customTheme_colorPrimary">#1976D2</color>

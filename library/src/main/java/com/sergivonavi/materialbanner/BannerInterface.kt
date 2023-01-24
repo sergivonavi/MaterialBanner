@@ -13,56 +13,45 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.sergivonavi.materialbanner
 
-package com.sergivonavi.materialbanner;
-
-public interface BannerInterface {
-
-    /**
-     * Dismisses the banner.
-     */
-    void dismiss();
-
-    /**
-     * Dismisses the banner after the specified delay in milliseconds.
-     *
-     * @param delay The amount of time, in milliseconds, to delay starting the banner animation
-     */
-    void dismiss(long delay);
+interface BannerInterface {
 
     /**
      * Interface used to allow the creator of a banner to run some code when a button in the
      * banner is clicked.
      */
-    interface OnClickListener {
-
+    fun interface OnClickListener {
         /**
          * This method will be invoked when a button in the banner is clicked.
          *
-         * @param banner the banner that received the click
+         * @param banner The banner that was clicked
          */
-        void onClick(BannerInterface banner);
+        fun onClick(banner: Banner)
     }
 
     /**
      * Interface used to allow the creator of a banner to run some code when the banner is
      * dismissed.
      */
-    interface OnDismissListener {
+    fun interface OnDismissListener {
         /**
          * This method will be invoked when the banner is dismissed.
+         *
+         * @param banner The banner that was dismissed
          */
-        void onDismiss();
+        fun onDismiss(banner: Banner?)
     }
 
     /**
      * Interface used to allow the creator of a banner to run some code when the banner is shown.
      */
-    interface OnShowListener {
+    fun interface OnShowListener {
         /**
          * This method will be invoked when the banner is shown.
+         *
+         * @param banner The banner that is shown
          */
-        void onShow();
+        fun onShow(banner: Banner?)
     }
-
 }

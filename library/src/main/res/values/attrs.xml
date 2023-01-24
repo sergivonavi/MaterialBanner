@@ -18,6 +18,12 @@
         <attr name="contentPaddingStart" format="dimension" />
         <!-- Sets the padding, in pixels, of the end edge. -->
         <attr name="contentPaddingEnd" format="dimension" />
+        <!-- Banner font path. -->
+        <attr name="fontPath" format="string" />
+        <!-- Message font path. -->
+        <attr name="messageFontPath" format="string" />
+        <!-- Buttons font path. -->
+        <attr name="buttonsFontPath" format="string" />
         <!-- Base text color, typeface, size, and style of the message text. -->
         <attr name="messageTextAppearance" format="reference" />
         <!-- Base text color, typeface, size, and style of the buttons' text. -->
@@ -26,6 +32,10 @@
         <attr name="messageTextColor" format="color" />
         <!-- Buttons text color. -->
         <attr name="buttonsTextColor" format="color" />
+        <!-- Left button text color. -->
+        <attr name="buttonLeftTextColor" format="color" />
+        <!-- Right button text color. -->
+        <attr name="buttonRightTextColor" format="color" />
         <!-- Buttons' ripple color. -->
         <attr name="buttonsRippleColor" format="color" />
         <!-- Banner background color. -->
