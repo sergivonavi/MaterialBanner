@@ -1,4 +1,4 @@
-# MaterialBanner [ ![Download](https://api.bintray.com/packages/sergivonavi/maven/MaterialBanner/images/download.svg) ](https://bintray.com/sergivonavi/maven/MaterialBanner/_latestVersion) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-MaterialBanner-brightgreen.svg?style=flat)](https://android-arsenal.com/details/1/7605)
+# MaterialBanner [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-MaterialBanner-brightgreen.svg?style=flat)](https://android-arsenal.com/details/1/7605)
 > A banner displays a prominent message and related optional actions.
 
 MaterialBanner is a library that provides an implementation of the banner widget from the Material design.
@@ -15,11 +15,23 @@ You can download the sample app here.
 
 # Setup
 
-## Add the gradle dependency
+## Legacy (version 1.2.0): Add the gradle dependency
+
+```
+jcenter {
+    content {
+        includeGroup "com.sergivonavi"
+    }
+}
+```
 
 ```
 implementation "com.sergivonavi:materialbanner:1.2.0"
 ```
+
+## Latest (version 2.0.0)
+
+Download sources and add the MaterialBanner library to your project.
 
 ## Check your theme
 
