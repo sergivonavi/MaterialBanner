@@ -290,7 +290,7 @@ __DO NOT__ set padding directly using the default padding attributes or methods.
 
 # License
 
-    Copyright 2019 Sergey Ivanov
+    Copyright 2023 Sergey Ivanov
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
