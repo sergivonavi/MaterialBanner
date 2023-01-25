@@ -60,7 +60,6 @@ import com.sergivonavi.materialbanner.widget.MessageView
  * For the style and usage guidelines read the
  * [Banners - Material Design](https://material.io/design/components/banners.html).
  */
-@Suppress("unused", "MemberVisibilityCanBePrivate")
 class Banner @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
@@ -1046,7 +1045,7 @@ class Banner @JvmOverloads constructor(
         companion object {
             @JvmField
             val CREATOR: Creator<SavedState?> = object : Creator<SavedState?> {
-                override fun createFromParcel(`in`: Parcel): SavedState? {
+                override fun createFromParcel(`in`: Parcel): SavedState {
                     return SavedState(`in`)
                 }
 

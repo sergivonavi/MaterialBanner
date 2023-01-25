@@ -3,7 +3,6 @@ plugins {
     id("org.jetbrains.kotlin.android")
 }
 apply from: "../_sign/signing.gradle"
-//apply(from = "../_sign/signing.gradle.kts")
 
 android {
     namespace "com.sergivonavi.materialbanner.app"
